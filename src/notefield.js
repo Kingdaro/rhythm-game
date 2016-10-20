@@ -8,45 +8,44 @@ const position = 220
 const borderWidth = 4
 const dividerWidth = 1
 
-export function Notefield (ctx) {
-  const {height} = ctx.canvas
+export function Notefield (fieldHeight) {
 
   function update (elapsed) {}
 
-  function drawShade () {
-    ctx.fillRect(0, 0, columnWidth * columnCount, height)
+  function drawShade (ctx) {
+    ctx.fillRect(0, 0, columnWidth * columnCount, fieldHeight)
   }
 
-  function drawEdge () {
-    ctx.fillRect(0, 0, borderWidth, height)
+  function drawEdge (ctx) {
+    ctx.fillRect(0, 0, borderWidth, fieldHeight)
   }
 
-  function drawColumnDivider () {
-    ctx.fillRect(0, 0, dividerWidth, height)
+  function drawColumnDivider (ctx) {
+    ctx.fillRect(0, 0, dividerWidth, fieldHeight)
   }
 
-  function draw () {
+  function draw (ctx) {
     const width = columnWidth * columnCount
 
     ctx.save()
 
     ctx.fillStyle = backgroundColor
     ctx.translate(position, 0)
-    drawShade()
+    drawShade(ctx)
 
     ctx.fillStyle = borderColor
 
     ctx.save()
     ctx.translate(-borderWidth / 2, 0)
-    drawEdge()
+    drawEdge(ctx)
     ctx.translate(width, 0)
-    drawEdge()
+    drawEdge(ctx)
     ctx.restore()
 
     ctx.fillStyle = dividerColor
     for (let i = 1; i < columnCount; i++) {
       ctx.translate(columnWidth, 0)
-      drawColumnDivider()
+      drawColumnDivider(ctx)
     }
 
     ctx.restore()

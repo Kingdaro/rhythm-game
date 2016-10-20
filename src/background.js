@@ -9,14 +9,14 @@ const colors = [
   'rgb(241, 196, 15)',
 ]
 
-export function Background (ctx) {
+export function Background (width, height) {
   let shapes = []
   let timer = 0
 
   // private
   function addShape () {
-    const x = Math.random() * ctx.canvas.width
-    const y = ctx.canvas.height + 100
+    const x = Math.random() * width
+    const y = height + 100
     const size = Math.random() * 2 + 2
     const color = colors[ Math.floor(Math.random() * colors.length) ]
     shapes.push({ x, y, size, color })
@@ -28,16 +28,6 @@ export function Background (ctx) {
     return shape
   }
 
-  function drawShape ({ x, y, color, size }) {
-    ctx.save()
-    ctx.fillStyle = color
-    ctx.translate(x, y)
-    ctx.scale(1, 1.1)
-    ctx.translate(-x, -y)
-    triangle(ctx, x, y, size * 20)
-    ctx.restore()
-  }
-
   function moveShapes (elapsed) {
     const move = shape => moveShape(shape, 0, -shape.size * 40 * elapsed)
     return shapes.map(move)
@@ -45,6 +35,16 @@ export function Background (ctx) {
 
   function cullShapes () {
     return shapes.filter(shape => shape.y >= -100)
+  }
+
+  function drawShape (ctx, { x, y, color, size }) {
+    ctx.save()
+    ctx.fillStyle = color
+    ctx.translate(x, y)
+    ctx.scale(1, 1.1)
+    ctx.translate(-x, -y)
+    triangle(ctx, x, y, size * 20)
+    ctx.restore()
   }
 
   // public
@@ -62,8 +62,8 @@ export function Background (ctx) {
     shapes = cullShapes()
   }
 
-  function draw () {
-    shapes.forEach(drawShape)
+  function draw (ctx) {
+    shapes.forEach(shape => drawShape(ctx, shape))
 
     ctx.font = '14pt Roboto'
     ctx.fillStyle = 'black'

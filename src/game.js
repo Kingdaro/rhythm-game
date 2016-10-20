@@ -1,25 +1,25 @@
 import {Background} from './background'
 import {Notefield} from './notefield'
 import {Scene} from './scene'
+import {Timer} from './timer'
 import {clear} from './drawutils'
 
 export function Game (ctx) {
+  const {width, height} = ctx.canvas
+
+  const timer = Timer()
+
   const scene = Scene([
-    Background(ctx),
-    Notefield(ctx),
+    Background(width, height),
+    Notefield(height),
   ])
 
-  let time = 0
-
-  function update (elapsed) {
-    time += elapsed
+  function step () {
+    const elapsed = timer.step()
     scene.update(elapsed)
-  }
-
-  function draw () {
     clear(ctx)
-    scene.draw()
+    scene.draw(ctx)
   }
 
-  return { update, draw }
+  return { step }
 }
