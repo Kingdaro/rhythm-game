@@ -1,0 +1,21 @@
+{
+  "name": "rhythm-game",
+  "version": "1.0.0",
+  "description": "something",
+  "author": "just nobody",
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "run-p dev:**",
+    "dev:rollup": "rollup -c -w",
+    "dev:server": "browser-sync start --server --files *.html bundle.js *.css"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.17.5",
+    "npm-run-all": "^3.1.1",
+    "rollup": "^0.36.3",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-watch": "^2.5.0",
+    "babel-preset-env": "^0.0.6"
+  }
+}
