@@ -72,11 +72,18 @@ export function Notefield (params) {
   function press (column) {
     columns[column].pressed = true
 
-    const hit = notes.findIndex(note => note.column === column && Math.abs(note.time - songTime) < 0.1)
-    if (hit > -1) {
-      notes.splice(hit, 1)
-      explosion.trigger((column + 0.5) * columnWidth, fieldHeight - keyHeight)
-      judgement.trigger()
+    for (const i in notes) {
+      const note = notes[i]
+      if (note.column === column) {
+        const timing = Math.abs(note.time - songTime)
+        const score = judgement.judgeTap(timing)
+        if (score > 0) {
+          notes.splice(i, 1)
+          explosion.trigger((column + 0.5) * columnWidth, fieldHeight - keyHeight)
+          judgement.trigger(score)
+          break
+        }
+      }
     }
   }
 
