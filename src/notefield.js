@@ -1,4 +1,5 @@
 import {Scene, Translate, FillColor, FillRect, StrokeStyle, StrokeRect} from './rendering'
+import {NoteExplosion} from './note-explosion'
 import {rgba} from './color'
 import {lerp, range} from './util'
 
@@ -18,12 +19,7 @@ const dividerColor = rgba(255, 255, 255, 0.1)
 const keyBorderColor = rgba(0, 0, 0, 0.2)
 
 export function Notefield (params) {
-  const {
-    height: fieldHeight,
-    columns: columnCount,
-    keyColors,
-    notes: noteData,
-  } = params
+  const { height: fieldHeight, columns: columnCount, keyColors, notes: noteData } = params
 
   const columns = keyColors.map(color => {
     return { color, pressed: false, brightness: 0 }
@@ -39,6 +35,8 @@ export function Notefield (params) {
     }
   })
 
+  const explosion = NoteExplosion()
+
   function update (elapsed) {
     columns.forEach((col, i) => {
       if (col.pressed) {
@@ -47,10 +45,17 @@ export function Notefield (params) {
         col.brightness = lerp(col.brightness, 0, elapsed * 20)
       }
     })
+
+    explosion.update(elapsed)
   }
 
   function press (column) {
     columns[column].pressed = true
+
+    explosion.trigger(
+      (column + 0.5) * columnWidth,
+      fieldHeight - keyHeight,
+    )
   }
 
   function lift (column) {
@@ -99,10 +104,14 @@ export function Notefield (params) {
         ...notes.map(renderNote),
       ),
 
+      // keys
       Scene(
         Translate(0, fieldHeight - keyHeight),
         ...columns.map(renderKey),
       ),
+
+      // note explosions
+      explosion.render(),
     )
   }
 

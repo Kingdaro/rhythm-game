@@ -30,3 +30,6 @@ export function rgb (r, g, b) {
 export function rgba (r, g, b, a) {
   return Color(r / 255, g / 255, b / 255, a)
 }
+
+export const Black = Color(0, 0, 0)
+export const White = Color(1, 1, 1)
