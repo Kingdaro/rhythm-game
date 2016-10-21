@@ -9,10 +9,10 @@ window.requestAnimationFrame(function draw () {
   window.requestAnimationFrame(draw)
 })
 
-document.addEventListener('keydown', event => {
-  game.keydown(event)
+window.addEventListener('keydown', event => {
+  if (!event.repeat) game.keydown(event)
 })
 
-document.addEventListener('keyup', event => {
-  game.keyup(event)
+window.addEventListener('keyup', event => {
+  if (!event.repeat) game.keyup(event)
 })
