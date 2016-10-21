@@ -1,9 +1,10 @@
-const columnWidth = 48
+const columnWidth = 50
 const position = 220
 const borderWidth = 4
 const dividerWidth = 1
 const keyHeight = 100
 const keyBorderWidth = 4
+const receptorHeight = 24
 
 const backgroundColor = 'rgba(0, 0, 0, 0.8)'
 const borderColor = 'rgba(255, 255, 255, 0.8)'
@@ -58,6 +59,15 @@ export function Notefield (params) {
           ctx.translate(columnWidth, 0)
         })
       })
+
+      // receptor
+      transform(() => {
+        ctx.translate(0, fieldHeight - keyHeight - receptorHeight)
+        keyColors.forEach(color => {
+          drawReceptor(ctx, color)
+          ctx.translate(columnWidth, 0)
+        })
+      })
     })
   }
 
@@ -83,6 +93,11 @@ export function Notefield (params) {
     ctx.lineWidth = keyBorderWidth
     ctx.strokeRect(keyBorderWidth / 2, keyBorderWidth / 2,
       columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
+  }
+
+  function drawReceptor (ctx, color) {
+    ctx.fillStyle = color
+    ctx.fillRect(0, 0, columnWidth, receptorHeight)
   }
 
   return { update, draw }
