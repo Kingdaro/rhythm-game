@@ -2,11 +2,12 @@ import {Background} from './background'
 import {Notefield} from './notefield'
 import {Scene} from './scene'
 import {Timer} from './timer'
+import {rgb} from './color'
 import {clear} from './drawutils'
 
-const gold = 'rgb(241, 196, 15)'
-const white = 'rgb(236, 240, 241)'
-const violet = 'rgb(155, 89, 182)'
+const gold = rgb(241, 196, 15)
+const white = rgb(236, 240, 241)
+const violet = rgb(155, 89, 182)
 
 export function Game (ctx) {
   const {width, height} = ctx.canvas

@@ -1,15 +1,17 @@
+import {rgba} from './color'
+
 const columnWidth = 50
 const position = 220
 const borderWidth = 4
 const dividerWidth = 1
 const keyHeight = 100
-const keyBorderWidth = 4
+const keyBorderWidth = 5
 const receptorHeight = 24
 
-const backgroundColor = 'rgba(0, 0, 0, 0.8)'
-const borderColor = 'rgba(255, 255, 255, 0.8)'
-const dividerColor = 'rgba(255, 255, 255, 0.1)'
-const keyBorderColor = 'rgba(0, 0, 0, 0.2)'
+const backgroundColor = rgba(0, 0, 0, 0.9)
+const borderColor = rgba(255, 255, 255, 0.8)
+const dividerColor = rgba(255, 255, 255, 0.1)
+const keyBorderColor = rgba(0, 0, 0, 0.2)
 
 export function Notefield (params) {
   const {
@@ -72,31 +74,31 @@ export function Notefield (params) {
   }
 
   function drawShade (ctx) {
-    ctx.fillStyle = backgroundColor
+    ctx.fillStyle = backgroundColor.toString()
     ctx.fillRect(0, 0, columnWidth * columnCount, fieldHeight)
   }
 
   function drawEdge (ctx) {
-    ctx.fillStyle = borderColor
+    ctx.fillStyle = borderColor.toString()
     ctx.fillRect(0, 0, borderWidth, fieldHeight)
   }
 
   function drawColumnDivider (ctx) {
-    ctx.fillStyle = dividerColor
+    ctx.fillStyle = dividerColor.toString()
     ctx.fillRect(0, 0, dividerWidth, fieldHeight)
   }
 
   function drawKey (ctx, color) {
-    ctx.fillStyle = color
+    ctx.fillStyle = color.toString()
     ctx.fillRect(0, 0, columnWidth, keyHeight)
-    ctx.strokeStyle = keyBorderColor
+    ctx.strokeStyle = color.darken(0.2).toString()
     ctx.lineWidth = keyBorderWidth
     ctx.strokeRect(keyBorderWidth / 2, keyBorderWidth / 2,
       columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
   }
 
   function drawReceptor (ctx, color) {
-    ctx.fillStyle = color
+    ctx.fillStyle = color.opacity(0.3).toString()
     ctx.fillRect(0, 0, columnWidth, receptorHeight)
   }
 
