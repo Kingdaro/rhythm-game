@@ -40,6 +40,7 @@ export function Game (ctx) {
     ],
     columns: 6,
     keyColors: [ gold, white, violet, white, violet, white ],
+    scrollSpeed: 10,
   })
 
   const bg = Background(width, height)

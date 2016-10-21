@@ -31,26 +31,32 @@ const dividerColor = rgba(255, 255, 255, 0.1)
 const keyBorderColor = rgba(0, 0, 0, 0.2)
 
 export function Notefield (params) {
-  const { height: fieldHeight, columns: columnCount, keyColors, notes: noteData } = params
+  const {
+    keyColors,
+    scrollSpeed = 1,
+    height: fieldHeight,
+    columns: columnCount,
+    notes: noteData,
+  } = params
 
-  const columns = keyColors.map(color => {
-    return { color, pressed: false, brightness: 0 }
-  })
-
-  const notes = noteData.map(note => {
-    return {
-      time: note.time,
-      column: note.column,
-      x: note.column * columnWidth,
-      y: note.time * noteSpacing,
-      judgement: 'none',
-    }
-  })
-
+  const notes = noteData.map(createNote)
+  const columns = keyColors.map(createColumn)
   const explosion = NoteExplosion()
   const judgement = Judgement()
 
+  let songTime = -2
+
+  function createNote ({ time, column }) {
+    return { time, column, judgement: 'none' }
+  }
+
+  function createColumn (color) {
+    return { color, pressed: false, brightness: 0 }
+  }
+
   function update (elapsed) {
+    songTime += elapsed
+
     columns.forEach((col, i) => {
       if (col.pressed) {
         col.brightness = 1
@@ -158,7 +164,9 @@ export function Notefield (params) {
     )
   }
 
-  function renderNote ({ x, y, column }) {
+  function renderNote ({ time, column }) {
+    const x = column * columnWidth
+    const y = (time - songTime) * noteSpacing
     return Scene(
       FillColor(columns[column].color),
       FillRect(x, -y, columnWidth, noteHeight),
