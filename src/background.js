@@ -1,12 +1,13 @@
+import {rgb} from './color'
 import {triangle} from './drawutils'
 
 const colors = [
-  'rgb(231, 76, 60)',
-  'rgb(52, 152, 219)',
-  'rgb(46, 204, 113)',
-  'rgb(230, 126, 34)',
-  'rgb(155, 89, 182)',
-  'rgb(241, 196, 15)',
+  rgb(231, 76, 60),
+  rgb(52, 152, 219),
+  rgb(46, 204, 113),
+  rgb(230, 126, 34),
+  rgb(155, 89, 182),
+  rgb(241, 196, 15),
 ]
 
 export function Background (width, height) {
@@ -39,7 +40,7 @@ export function Background (width, height) {
 
   function drawShape (ctx, { x, y, color, size }) {
     ctx.save()
-    ctx.fillStyle = color
+    ctx.fillStyle = color.toString()
     ctx.translate(x, y)
     ctx.scale(1, 1.1)
     ctx.translate(-x, -y)
