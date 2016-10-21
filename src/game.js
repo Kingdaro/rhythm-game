@@ -27,14 +27,7 @@ export function Game (ctx) {
     height,
     notes: [],
     columns: 6,
-    keyColors: [
-      gold,
-      white,
-      violet,
-      white,
-      violet,
-      white,
-    ]
+    keyColors: [ gold, white, violet, white, violet, white ]
   })
 
   const bg = Background(width, height)
