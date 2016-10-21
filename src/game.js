@@ -25,7 +25,14 @@ export function Game (ctx) {
 
   const field = Notefield({
     height,
-    notes: [],
+    notes: [
+      { column: 0, time: 0 },
+      { column: 1, time: 1 },
+      { column: 2, time: 2 },
+      { column: 3, time: 3 },
+      { column: 4, time: 4 },
+      { column: 5, time: 5 },
+    ],
     columns: 6,
     keyColors: [ gold, white, violet, white, violet, white ]
   })
