@@ -37,16 +37,16 @@ export function Game (ctx) {
     ]
   })
 
-  const scene = Scene([
-    Background(width, height),
-    field,
-  ])
+  const bg = Background(width, height)
 
   function step () {
     const elapsed = timer.step()
-    scene.update(elapsed)
+    bg.update(elapsed)
+    field.update(elapsed)
+
     clear(ctx)
-    scene.draw(ctx)
+    bg.draw(ctx)
+    field.draw(ctx)
   }
 
   function keydown (event) {

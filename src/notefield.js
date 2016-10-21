@@ -22,8 +22,17 @@ export function Notefield (params) {
   } = params
 
   const columnInputs = Array(columnCount).fill(false)
+  const columnBrightness = Array(columnCount).fill(0)
 
-  function update (elapsed) {}
+  function update (elapsed) {
+    columnInputs.forEach((pressed, i) => {
+      if (pressed) {
+        columnBrightness[i] = 1
+      } else {
+        columnBrightness[i] = Math.max(columnBrightness[i] - elapsed * 13, 0)
+      }
+    })
+  }
 
   function press (column) {
     columnInputs[column] = true
@@ -66,8 +75,8 @@ export function Notefield (params) {
       // keys
       transform(() => {
         ctx.translate(0, fieldHeight - keyHeight)
-        keyColors.forEach(color => {
-          drawKey(ctx, color)
+        keyColors.forEach((color, i) => {
+          drawKey(ctx, color, columnBrightness[i])
           ctx.translate(columnWidth, 0)
         })
       })
@@ -76,7 +85,7 @@ export function Notefield (params) {
       transform(() => {
         ctx.translate(0, fieldHeight - keyHeight - receptorHeight)
         keyColors.forEach((color, i) => {
-          drawReceptor(ctx, color, i)
+          drawReceptor(ctx, color, columnBrightness[i])
           ctx.translate(columnWidth, 0)
         })
       })
@@ -98,17 +107,18 @@ export function Notefield (params) {
     ctx.fillRect(-dividerWidth / 2, 0, dividerWidth, fieldHeight)
   }
 
-  function drawKey (ctx, color) {
-    ctx.fillStyle = color.toString()
+  function drawKey (ctx, color, brightness) {
+    const dim = (1 - brightness) * 0.3
+    ctx.fillStyle = color.darken(dim).toString()
     ctx.fillRect(0, 0, columnWidth, keyHeight)
-    ctx.strokeStyle = color.darken(0.2).toString()
+    ctx.strokeStyle = color.darken(dim + 0.2).toString()
     ctx.lineWidth = keyBorderWidth
     ctx.strokeRect(keyBorderWidth / 2, keyBorderWidth / 2,
       columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
   }
 
-  function drawReceptor (ctx, color, column) {
-    const opacity = columnInputs[column] ? 0.6 : 0.3
+  function drawReceptor (ctx, color, brightness) {
+    const opacity = 0.3 + brightness * 0.3
     ctx.fillStyle = color.opacity(opacity).toString()
     ctx.fillRect(0, 0, columnWidth, receptorHeight)
   }
