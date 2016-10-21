@@ -22,25 +22,26 @@ export function Notefield (params) {
     notes,
   } = params
 
-  const columnInputs = Array(columnCount).fill(false)
-  const columnBrightness = Array(columnCount).fill(0)
+  const columns = keyColors.map(color => {
+    return { color, pressed: false, brightness: 0 }
+  })
 
   function update (elapsed) {
-    columnInputs.forEach((pressed, i) => {
-      if (pressed) {
-        columnBrightness[i] = 1
+    columns.forEach((col, i) => {
+      if (col.pressed) {
+        col.brightness = 1
       } else {
-        columnBrightness[i] = lerp(columnBrightness[i], 0, elapsed * 20)
+        col.brightness = lerp(col.brightness, 0, elapsed * 20)
       }
     })
   }
 
   function press (column) {
-    columnInputs[column] = true
+    columns[column].pressed = true
   }
 
   function lift (column) {
-    columnInputs[column] = false
+    columns[column].pressed = false
   }
 
   function draw (ctx) {
@@ -75,8 +76,8 @@ export function Notefield (params) {
 
       // backlight
       transform(() => {
-        keyColors.forEach((color, i) => {
-          drawBacklight(ctx, color, columnBrightness[i])
+        columns.forEach(col => {
+          drawBacklight(ctx, col.color, col.brightness)
           ctx.translate(columnWidth, 0)
         })
       })
@@ -84,8 +85,8 @@ export function Notefield (params) {
       // keys
       transform(() => {
         ctx.translate(0, fieldHeight - keyHeight)
-        keyColors.forEach((color, i) => {
-          drawKey(ctx, color, columnBrightness[i])
+        columns.forEach(col => {
+          drawKey(ctx, col.color, col.brightness)
           ctx.translate(columnWidth, 0)
         })
       })
@@ -93,8 +94,8 @@ export function Notefield (params) {
       // receptor
       transform(() => {
         ctx.translate(0, fieldHeight - keyHeight - receptorHeight)
-        keyColors.forEach((color, i) => {
-          drawReceptor(ctx, color, columnBrightness[i])
+        columns.forEach(col => {
+          drawReceptor(ctx, col.color, col.brightness)
           ctx.translate(columnWidth, 0)
         })
       })
