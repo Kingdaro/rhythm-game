@@ -1,7 +1,7 @@
 import {Background} from './background'
 import {Notefield} from './notefield'
-import {Scene} from './scene'
 import {Timer} from './timer'
+import {Scene} from './rendering'
 import {rgb} from './color'
 import {clear} from './drawutils'
 
@@ -44,9 +44,13 @@ export function Game (ctx) {
     bg.update(elapsed)
     field.update(elapsed)
 
+    const draw = Scene(
+      bg.render(),
+      field.render(),
+    )
+
     clear(ctx)
-    bg.draw(ctx)
-    field.draw(ctx)
+    draw(ctx)
   }
 
   function keydown (event) {

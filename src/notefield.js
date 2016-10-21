@@ -1,5 +1,6 @@
+import {Scene, Translate, FillColor, FillRect, StrokeStyle, StrokeRect} from './rendering'
 import {rgba} from './color'
-import {lerp} from './util'
+import {lerp, range} from './util'
 
 const columnWidth = 50
 const position = 220
@@ -56,109 +57,96 @@ export function Notefield (params) {
     columns[column].pressed = false
   }
 
-  function drawShade (ctx) {
-    ctx.fillStyle = backgroundColor.toString()
-    ctx.fillRect(0, 0, columnWidth * columnCount, fieldHeight)
-  }
+  function render () {
+    const fieldWidth = columnWidth * columnCount
+    return Scene(
+      // origin at notefield position
+      Translate(position, 0),
 
-  function drawEdge (ctx) {
-    ctx.fillStyle = borderColor.toString()
-    ctx.fillRect(0, 0, borderWidth, fieldHeight)
-  }
-
-  function drawColumnDivider (ctx) {
-    ctx.fillStyle = dividerColor.toString()
-    ctx.fillRect(-dividerWidth / 2, 0, dividerWidth, fieldHeight)
-  }
-
-  function drawKey (ctx, color, brightness) {
-    const dim = lerp(0.3, 0, brightness)
-    ctx.fillStyle = color.darken(dim).toString()
-    ctx.fillRect(0, 0, columnWidth, keyHeight)
-    ctx.strokeStyle = color.darken(dim + 0.2).toString()
-    ctx.lineWidth = keyBorderWidth
-    ctx.strokeRect(keyBorderWidth / 2, keyBorderWidth / 2,
-      columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
-  }
-
-  function drawReceptor (ctx, color, brightness) {
-    const opacity = lerp(0.3, 0.6, brightness)
-    ctx.fillStyle = color.opacity(opacity).toString()
-    ctx.fillRect(0, 0, columnWidth, receptorHeight)
-  }
-
-  function drawBacklight (ctx, color, brightness) {
-    const opacity = lerp(0.03, 0.15, brightness)
-    ctx.fillStyle = color.opacity(opacity).toString()
-    ctx.fillRect(0, 0, columnWidth, fieldHeight)
-  }
-
-  function draw (ctx) {
-    const width = columnWidth * columnCount
-
-    function transform (drawops) {
-      ctx.save()
-      drawops()
-      ctx.restore()
-    }
-
-    transform(() => {
       // background shade
-      ctx.translate(position, 0)
-      drawShade(ctx)
+      Scene(
+        FillColor(backgroundColor),
+        FillRect(0, 0, fieldWidth, fieldHeight),
+      ),
 
       // column dividers
-      transform(() => {
-        for (let i = 1; i < columnCount; i++) {
-          ctx.translate(columnWidth, 0)
-          drawColumnDivider(ctx)
-        }
-      })
+      Scene(
+        FillColor(dividerColor),
+        ...range(1, columnCount - 1).map(renderColumnDivider),
+      ),
 
       // notefield edges
-      transform(() => {
-        ctx.translate(-borderWidth, 0)
-        drawEdge(ctx)
-        ctx.translate(width + borderWidth, 0)
-        drawEdge(ctx)
-      })
+      Scene(
+        FillColor(borderColor),
+        Translate(-borderWidth),
+        FillRect(-dividerWidth / 2, 0, dividerWidth, fieldHeight),
+        Translate(fieldWidth + borderWidth),
+        FillRect(-dividerWidth / 2, 0, dividerWidth, fieldHeight),
+      ),
 
-      // backlight
-      transform(() => {
-        columns.forEach(col => {
-          drawBacklight(ctx, col.color, col.brightness)
-          ctx.translate(columnWidth, 0)
-        })
-      })
+      // backlights
+      Scene(...columns.map(renderBacklight)),
 
-      // receptor
-      transform(() => {
-        ctx.translate(0, fieldHeight - keyHeight - receptorHeight)
-        columns.forEach(col => {
-          drawReceptor(ctx, col.color, col.brightness)
-          ctx.translate(columnWidth, 0)
-        })
-      })
+      // receptors
+      Scene(
+        Translate(0, fieldHeight - keyHeight - receptorHeight),
+        ...columns.map(renderReceptor),
+      ),
 
       // notes
-      transform(() => {
-        ctx.translate(0, fieldHeight - keyHeight - receptorHeight)
-        notes.forEach(note => {
-          ctx.fillStyle = columns[note.column].color.toString()
-          ctx.fillRect(note.x, -note.y, columnWidth, noteHeight)
-        })
-      })
+      Scene(
+        Translate(0, fieldHeight - keyHeight - receptorHeight),
+        ...notes.map(renderNote),
+      ),
 
-      // keys
-      transform(() => {
-        ctx.translate(0, fieldHeight - keyHeight)
-        columns.forEach(col => {
-          drawKey(ctx, col.color, col.brightness)
-          ctx.translate(columnWidth, 0)
-        })
-      })
-    })
+      Scene(
+        Translate(0, fieldHeight - keyHeight),
+        ...columns.map(renderKey),
+      ),
+    )
   }
 
-  return { update, draw, press, lift }
+  function renderColumnDivider (col) {
+    const x = columnWidth * col - dividerWidth / 2
+    return FillRect(x, 0, dividerWidth, fieldHeight)
+  }
+
+  function renderReceptor ({ color, brightness }, index) {
+    const opacity = lerp(0.3, 0.6, brightness)
+    return Scene(
+      FillColor(color.opacity(opacity).toString()),
+      FillRect(index * columnWidth, 0, columnWidth, receptorHeight),
+    )
+  }
+
+  function renderBacklight ({ color, brightness }, index) {
+    const opacity = lerp(0.03, 0.15, brightness)
+    return Scene(
+      FillColor(color.opacity(opacity).toString()),
+      FillRect(index * columnWidth, 0, columnWidth, fieldHeight)
+    )
+  }
+
+  function renderNote ({ x, y, column }) {
+    return Scene(
+      FillColor(columns[column].color),
+      FillRect(x, -y, columnWidth, noteHeight),
+    )
+  }
+
+  function renderKey ({ color, brightness }, index) {
+    const dim = lerp(0.3, 0, brightness)
+    return Scene(
+      // rectangle body
+      FillColor(color.darken(dim)),
+      FillRect(columnWidth * index, 0, columnWidth, keyHeight),
+
+      // darkened edge
+      StrokeStyle(color.darken(dim + 0.2), keyBorderWidth),
+      StrokeRect(columnWidth * index + keyBorderWidth / 2, keyBorderWidth / 2,
+        columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
+    )
+  }
+
+  return { update, render, press, lift }
 }

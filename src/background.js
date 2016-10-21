@@ -1,5 +1,5 @@
+import {Scene, FillColor, FillCircle, Translate, RotateDegrees} from './rendering'
 import {rgb} from './color'
-import {triangle} from './drawutils'
 
 const colors = [
   rgb(231, 76, 60),
@@ -38,16 +38,6 @@ export function Background (width, height) {
     return shapes.filter(shape => shape.y >= -100)
   }
 
-  function drawShape (ctx, { x, y, color, size }) {
-    ctx.save()
-    ctx.fillStyle = color.toString()
-    ctx.translate(x, y)
-    ctx.scale(1, 1.1)
-    ctx.translate(-x, -y)
-    triangle(ctx, x, y, size * 20)
-    ctx.restore()
-  }
-
   // public
   function update (elapsed) {
     if (elapsed > 1) return // no bullshit updates
@@ -71,5 +61,18 @@ export function Background (width, height) {
     ctx.fillText(`Shapes: ${shapes.length}`, 10, 30)
   }
 
-  return { update, draw }
+  function render () {
+    return Scene(
+      ...shapes.map(({ x, y, size, color }) => {
+        return Scene(
+          Translate(x, y),
+          RotateDegrees(-90),
+          FillColor(color),
+          FillCircle(0, 0, size * 30, 3),
+        )
+      })
+    )
+  }
+
+  return { update, render }
 }
