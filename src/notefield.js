@@ -1,5 +1,17 @@
-import {Scene, Translate, FillColor, FillRect, StrokeStyle, StrokeRect} from './rendering'
+import {
+  Scene,
+  Translate,
+  FillColor,
+  FillRect,
+  StrokeStyle,
+  StrokeRect,
+  FillText,
+  Font,
+  TextAlign,
+} from './rendering'
+
 import {NoteExplosion} from './note-explosion'
+import {Judgement} from './judgement'
 import {rgba} from './color'
 import {lerp, range} from './util'
 
@@ -36,6 +48,7 @@ export function Notefield (params) {
   })
 
   const explosion = NoteExplosion()
+  const judgement = Judgement()
 
   function update (elapsed) {
     columns.forEach((col, i) => {
@@ -47,6 +60,7 @@ export function Notefield (params) {
     })
 
     explosion.update(elapsed)
+    judgement.update(elapsed)
   }
 
   function press (column) {
@@ -56,6 +70,8 @@ export function Notefield (params) {
       (column + 0.5) * columnWidth,
       fieldHeight - keyHeight,
     )
+
+    judgement.trigger()
   }
 
   function lift (column) {
@@ -112,6 +128,12 @@ export function Notefield (params) {
 
       // note explosions
       explosion.render(),
+
+      // judgement
+      Scene(
+        Translate(fieldWidth / 2, fieldHeight / 2 + 100),
+        judgement.render(),
+      ),
     )
   }
 

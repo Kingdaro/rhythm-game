@@ -39,6 +39,12 @@ export function FillCircle (x, y, radius, sides = 0) {
   }
 }
 
+export function FillText (text, x, y) {
+  return function draw (ctx) {
+    ctx.fillText(text, x, y)
+  }
+}
+
 // graphics state
 export function FillColor (color) {
   return function draw (ctx) {
@@ -59,6 +65,18 @@ export function Shadow (ox, oy, blur, color) {
     ctx.shadowOffsetY = oy
     ctx.shadowBlur = blur
     ctx.shadowColor = color.toString()
+  }
+}
+
+export function Font (font) {
+  return function draw (ctx) {
+    ctx.font = font
+  }
+}
+
+export function TextAlign (align) {
+  return function draw (ctx)  {
+    ctx.textAlign = align
   }
 }
 
