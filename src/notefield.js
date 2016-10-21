@@ -72,12 +72,12 @@ export function Notefield (params) {
   function press (column) {
     columns[column].pressed = true
 
-    explosion.trigger(
-      (column + 0.5) * columnWidth,
-      fieldHeight - keyHeight,
-    )
-
-    judgement.trigger()
+    const hit = notes.findIndex(note => note.column === column && Math.abs(note.time - songTime) < 0.1)
+    if (hit > -1) {
+      notes.splice(hit, 1)
+      explosion.trigger((column + 0.5) * columnWidth, fieldHeight - keyHeight)
+      judgement.trigger()
+    }
   }
 
   function lift (column) {
@@ -166,7 +166,7 @@ export function Notefield (params) {
 
   function renderNote ({ time, column }) {
     const x = column * columnWidth
-    const y = (time - songTime) * noteSpacing
+    const y = (time - songTime) * noteSpacing * scrollSpeed
     return Scene(
       FillColor(columns[column].color),
       FillRect(x, -y, columnWidth, noteHeight),
