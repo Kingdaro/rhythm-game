@@ -17,7 +17,7 @@ export function NoteExplosion () {
   }
 
   function trigger (ox, oy) {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 12; i++) {
       createParticle(ox, oy)
     }
   }
