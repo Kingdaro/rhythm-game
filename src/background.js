@@ -11,10 +11,10 @@ const colors = [
 ]
 
 export function Background (width, height) {
+  // private
   let shapes = []
   let timer = 0
 
-  // private
   function addShape () {
     const x = Math.random() * width
     const y = height + 100
@@ -51,14 +51,6 @@ export function Background (width, height) {
 
     shapes = moveShapes(elapsed)
     shapes = cullShapes()
-  }
-
-  function draw (ctx) {
-    shapes.forEach(shape => drawShape(ctx, shape))
-
-    ctx.font = '14pt Roboto'
-    ctx.fillStyle = 'black'
-    ctx.fillText(`Shapes: ${shapes.length}`, 10, 30)
   }
 
   function render () {
