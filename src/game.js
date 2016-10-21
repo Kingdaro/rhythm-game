@@ -4,6 +4,10 @@ import {Scene} from './scene'
 import {Timer} from './timer'
 import {clear} from './drawutils'
 
+const gold = 'rgb(241, 196, 15)'
+const white = 'rgb(236, 240, 241)'
+const violet = 'rgb(155, 89, 182)'
+
 export function Game (ctx) {
   const {width, height} = ctx.canvas
 
@@ -11,7 +15,19 @@ export function Game (ctx) {
 
   const scene = Scene([
     Background(width, height),
-    Notefield({ height, columns: 6, notes: [] }),
+    Notefield({
+      height,
+      notes: [],
+      columns: 6,
+      keyColors: [
+        gold,
+        white,
+        violet,
+        white,
+        violet,
+        white,
+      ]
+    }),
   ])
 
   function step () {
