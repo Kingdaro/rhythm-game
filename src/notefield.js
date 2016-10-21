@@ -20,30 +20,6 @@ export function Notefield (params) {
 
   function update (elapsed) {}
 
-  function drawShade (ctx) {
-    ctx.fillStyle = backgroundColor
-    ctx.fillRect(0, 0, columnWidth * columnCount, fieldHeight)
-  }
-
-  function drawEdge (ctx) {
-    ctx.fillStyle = borderColor
-    ctx.fillRect(0, 0, borderWidth, fieldHeight)
-  }
-
-  function drawColumnDivider (ctx) {
-    ctx.fillStyle = dividerColor
-    ctx.fillRect(0, 0, dividerWidth, fieldHeight)
-  }
-
-  function drawKey (ctx, color) {
-    ctx.fillStyle = color
-    ctx.fillRect(0, 0, columnWidth, keyHeight)
-    ctx.strokeStyle = keyBorderColor
-    ctx.lineWidth = keyBorderWidth
-    ctx.strokeRect(keyBorderWidth / 2, keyBorderWidth / 2,
-      columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
-  }
-
   function draw (ctx) {
     const width = columnWidth * columnCount
 
@@ -83,6 +59,30 @@ export function Notefield (params) {
         })
       })
     })
+  }
+
+  function drawShade (ctx) {
+    ctx.fillStyle = backgroundColor
+    ctx.fillRect(0, 0, columnWidth * columnCount, fieldHeight)
+  }
+
+  function drawEdge (ctx) {
+    ctx.fillStyle = borderColor
+    ctx.fillRect(0, 0, borderWidth, fieldHeight)
+  }
+
+  function drawColumnDivider (ctx) {
+    ctx.fillStyle = dividerColor
+    ctx.fillRect(0, 0, dividerWidth, fieldHeight)
+  }
+
+  function drawKey (ctx, color) {
+    ctx.fillStyle = color
+    ctx.fillRect(0, 0, columnWidth, keyHeight)
+    ctx.strokeStyle = keyBorderColor
+    ctx.lineWidth = keyBorderWidth
+    ctx.strokeRect(keyBorderWidth / 2, keyBorderWidth / 2,
+      columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
   }
 
   return { update, draw }
