@@ -1,4 +1,5 @@
 import {rgba} from './color'
+import {lerp} from './util'
 
 const columnWidth = 50
 const position = 220
@@ -29,7 +30,7 @@ export function Notefield (params) {
       if (pressed) {
         columnBrightness[i] = 1
       } else {
-        columnBrightness[i] = Math.max(columnBrightness[i] - elapsed * 13, 0)
+        columnBrightness[i] = lerp(columnBrightness[i], 0, elapsed * 20)
       }
     })
   }
@@ -108,7 +109,7 @@ export function Notefield (params) {
   }
 
   function drawKey (ctx, color, brightness) {
-    const dim = (1 - brightness) * 0.3
+    const dim = lerp(0.3, 0, brightness)
     ctx.fillStyle = color.darken(dim).toString()
     ctx.fillRect(0, 0, columnWidth, keyHeight)
     ctx.strokeStyle = color.darken(dim + 0.2).toString()
@@ -118,7 +119,7 @@ export function Notefield (params) {
   }
 
   function drawReceptor (ctx, color, brightness) {
-    const opacity = 0.3 + brightness * 0.3
+    const opacity = lerp(0.3, 0.6, brightness)
     ctx.fillStyle = color.opacity(opacity).toString()
     ctx.fillRect(0, 0, columnWidth, receptorHeight)
   }
