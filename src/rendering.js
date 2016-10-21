@@ -62,3 +62,12 @@ export function RotateDegrees (degrees) {
     ctx.rotate(rads)
   }
 }
+
+export function Shadow (ox, oy, blur, color) {
+  return function draw (ctx) {
+    ctx.shadowOffsetX = ox
+    ctx.shadowOffsetY = oy
+    ctx.shadowBlur = blur
+    ctx.shadowColor = color.toString()
+  }
+}

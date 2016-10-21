@@ -1,4 +1,4 @@
-import {Scene, FillColor, FillCircle, Translate, RotateDegrees} from './rendering'
+import {Scene, FillColor, FillCircle, Translate, RotateDegrees, Shadow} from './rendering'
 import {White} from './color'
 import {lerp} from './util'
 
@@ -43,6 +43,7 @@ export function NoteExplosion () {
     return Scene(
       Translate(ox + x, oy + y),
       RotateDegrees(-90),
+      Shadow(0, 0, 8, White.opacity(life)),
       FillColor(White.opacity(life)),
       FillCircle(0, 0, 8, 3),
     )
