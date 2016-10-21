@@ -3,7 +3,7 @@ import {rgba} from './color'
 const columnWidth = 50
 const position = 220
 const borderWidth = 4
-const dividerWidth = 1
+const dividerWidth = 2
 const keyHeight = 100
 const keyBorderWidth = 5
 const receptorHeight = 24
@@ -85,7 +85,7 @@ export function Notefield (params) {
 
   function drawColumnDivider (ctx) {
     ctx.fillStyle = dividerColor.toString()
-    ctx.fillRect(0, 0, dividerWidth, fieldHeight)
+    ctx.fillRect(-dividerWidth / 2, 0, dividerWidth, fieldHeight)
   }
 
   function drawKey (ctx, color) {
