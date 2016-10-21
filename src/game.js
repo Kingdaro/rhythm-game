@@ -11,7 +11,7 @@ export function Game (ctx) {
 
   const scene = Scene([
     Background(width, height),
-    Notefield(height),
+    Notefield({ height, columns: 6, notes: [] }),
   ])
 
   function step () {

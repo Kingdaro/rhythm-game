@@ -3,12 +3,11 @@ const borderColor = 'rgba(255, 255, 255, 0.8)'
 const dividerColor = 'rgba(255, 255, 255, 0.1)'
 
 const columnWidth = 48
-const columnCount = 6
 const position = 220
 const borderWidth = 4
 const dividerWidth = 1
 
-export function Notefield (fieldHeight) {
+export function Notefield ({ height: fieldHeight, columns: columnCount, notes }) {
 
   function update (elapsed) {}
 
