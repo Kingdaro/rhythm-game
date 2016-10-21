@@ -73,6 +73,14 @@ export function Notefield (params) {
         drawEdge(ctx)
       })
 
+      // backlight
+      transform(() => {
+        keyColors.forEach((color, i) => {
+          drawBacklight(ctx, color, columnBrightness[i])
+          ctx.translate(columnWidth, 0)
+        })
+      })
+
       // keys
       transform(() => {
         ctx.translate(0, fieldHeight - keyHeight)
@@ -122,6 +130,12 @@ export function Notefield (params) {
     const opacity = lerp(0.3, 0.6, brightness)
     ctx.fillStyle = color.opacity(opacity).toString()
     ctx.fillRect(0, 0, columnWidth, receptorHeight)
+  }
+
+  function drawBacklight (ctx, color, brightness) {
+    const opacity = lerp(0.03, 0.15, brightness)
+    ctx.fillStyle = color.opacity(opacity).toString()
+    ctx.fillRect(0, 0, columnWidth, fieldHeight)
   }
 
   return { update, draw, press, lift }
