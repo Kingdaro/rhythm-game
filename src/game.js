@@ -3,7 +3,6 @@ import {Notefield} from './notefield'
 import {Timer} from './timer'
 import {Scene} from './rendering'
 import {rgb} from './color'
-import {clear} from './drawutils'
 
 const gold = rgb(241, 196, 15)
 const white = rgb(236, 240, 241)
@@ -17,6 +16,12 @@ const bindings = [
   'KeyK',
   'KeyL',
 ]
+
+export function clear (ctx) {
+  const {width, height} = ctx.canvas
+  ctx.fillStyle = 'white'
+  ctx.fillRect(0, 0, width, height)
+}
 
 export function Game (ctx) {
   const {width, height} = ctx.canvas
