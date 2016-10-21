@@ -21,7 +21,17 @@ export function Notefield (params) {
     notes,
   } = params
 
+  const columnInputs = Array(columnCount).fill(false)
+
   function update (elapsed) {}
+
+  function press (column) {
+    columnInputs[column] = true
+  }
+
+  function lift (column) {
+    columnInputs[column] = false
+  }
 
   function draw (ctx) {
     const width = columnWidth * columnCount
@@ -65,8 +75,8 @@ export function Notefield (params) {
       // receptor
       transform(() => {
         ctx.translate(0, fieldHeight - keyHeight - receptorHeight)
-        keyColors.forEach(color => {
-          drawReceptor(ctx, color)
+        keyColors.forEach((color, i) => {
+          drawReceptor(ctx, color, i)
           ctx.translate(columnWidth, 0)
         })
       })
@@ -97,10 +107,11 @@ export function Notefield (params) {
       columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
   }
 
-  function drawReceptor (ctx, color) {
-    ctx.fillStyle = color.opacity(0.3).toString()
+  function drawReceptor (ctx, color, column) {
+    const opacity = columnInputs[column] ? 0.6 : 0.3
+    ctx.fillStyle = color.opacity(opacity).toString()
     ctx.fillRect(0, 0, columnWidth, receptorHeight)
   }
 
-  return { update, draw }
+  return { update, draw, press, lift }
 }

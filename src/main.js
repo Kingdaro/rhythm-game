@@ -8,3 +8,11 @@ window.requestAnimationFrame(function draw () {
   game.step()
   window.requestAnimationFrame(draw)
 })
+
+document.addEventListener('keydown', event => {
+  game.keydown(event)
+})
+
+document.addEventListener('keyup', event => {
+  game.keyup(event)
+})

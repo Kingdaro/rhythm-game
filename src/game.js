@@ -9,26 +9,37 @@ const gold = rgb(241, 196, 15)
 const white = rgb(236, 240, 241)
 const violet = rgb(155, 89, 182)
 
+const bindings = [
+  'KeyS',
+  'KeyD',
+  'KeyF',
+  'KeyJ',
+  'KeyK',
+  'KeyL',
+]
+
 export function Game (ctx) {
   const {width, height} = ctx.canvas
 
   const timer = Timer()
 
+  const field = Notefield({
+    height,
+    notes: [],
+    columns: 6,
+    keyColors: [
+      gold,
+      white,
+      violet,
+      white,
+      violet,
+      white,
+    ]
+  })
+
   const scene = Scene([
     Background(width, height),
-    Notefield({
-      height,
-      notes: [],
-      columns: 6,
-      keyColors: [
-        gold,
-        white,
-        violet,
-        white,
-        violet,
-        white,
-      ]
-    }),
+    field,
   ])
 
   function step () {
@@ -38,5 +49,15 @@ export function Game (ctx) {
     scene.draw(ctx)
   }
 
-  return { step }
+  function keydown (event) {
+    const index = bindings.indexOf(event.code)
+    if (index > -1) field.press(index)
+  }
+
+  function keyup (event) {
+    const index = bindings.indexOf(event.code)
+    if (index > -1) field.lift(index)
+  }
+
+  return { step, keydown, keyup }
 }
