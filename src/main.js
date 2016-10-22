@@ -11,10 +11,5 @@ window.requestAnimationFrame(function frame () {
   window.requestAnimationFrame(frame)
 })
 
-window.addEventListener('keydown', event => {
-  if (!event.repeat) game.keydown(event)
-})
-
-window.addEventListener('keyup', event => {
-  if (!event.repeat) game.keyup(event)
-})
+window.addEventListener('keydown', game.keydown)
+window.addEventListener('keyup', game.keyup)
