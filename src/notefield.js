@@ -14,6 +14,7 @@ const borderColor = White.opacity(0.8)
 const columnColors = [ Gold, Cloudy, Violet, Cloudy, Violet, Cloudy ]
 
 export function Notefield (song, config) {
+  // private
   const { scrollSpeed } = config
 
   const explosion = NoteExplosion()
@@ -47,6 +48,7 @@ export function Notefield (song, config) {
     }
   }
 
+  // public
   function press (columnIndex) {
     const column = columns[columnIndex]
     column.press()
