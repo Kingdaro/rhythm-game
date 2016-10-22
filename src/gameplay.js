@@ -2,7 +2,6 @@ import {Gamestate} from './game'
 import {Background} from './background'
 import {Notefield} from './notefield'
 import {Scene} from './rendering'
-import {Gold, Cloudy, Violet} from './color'
 
 const bindings = [
   'KeyA',
@@ -22,8 +21,9 @@ export function clear (ctx) {
 export function Gameplay () {
   const {width, height} = document.querySelector('#game')
 
-  const field = Notefield({
-    height,
+  const song = {
+    title: 'random song',
+    artist: 'random person',
     notes: [
       { column: 0, time: 0 },
       { column: 1, time: 1 },
@@ -31,12 +31,12 @@ export function Gameplay () {
       { column: 3, time: 3 },
       { column: 4, time: 4 },
       { column: 5, time: 5 }
-    ],
-    columns: 6,
-    keyColors: [ Gold, Cloudy, Violet, Cloudy, Violet, Cloudy ],
-    scrollSpeed: 3
-  })
+    ]
+  }
 
+  const config = { scrollSpeed: 3 }
+
+  const field = Notefield(song, config)
   const bg = Background(width, height)
 
   function update (elapsed) {

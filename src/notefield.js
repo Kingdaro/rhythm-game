@@ -1,17 +1,10 @@
-import {
-  Scene,
-  Translate,
-  FillColor,
-  FillRect,
-  StrokeStyle,
-  StrokeRect
-} from './rendering'
+import { Scene, Translate, FillColor, FillRect, StrokeStyle, StrokeRect } from './rendering'
+import { NoteExplosion } from './note-explosion'
+import { Judgement, JudgeLevels, getJudgement, isMissed } from './judgement'
+import { White, Black, Gold, Cloudy, Violet } from './color'
+import { lerp, range, tail } from './util'
 
-import {NoteExplosion} from './note-explosion'
-import {Judgement, JudgeLevels, getJudgement, isMissed} from './judgement'
-import {White, Black} from './color'
-import {lerp, range, tail} from './util'
-
+const columnCount = 6
 const columnWidth = 50
 const position = 220
 const borderWidth = 4
@@ -26,51 +19,44 @@ const backgroundColor = Black.opacity(0.9)
 const borderColor = White.opacity(0.8)
 const dividerColor = White.opacity(0.1)
 
-function createNote ({ time, column }) {
-  return { time, column, judgement: 'none' }
-}
+const columnColors = [ Gold, Cloudy, Violet, Cloudy, Violet, Cloudy ]
 
-function createColumn (color, notes) {
-  return { color, pressed: false, brightness: 0, notes }
-}
+export function Notefield (song, config) {
+  const { height: fieldHeight } = document.querySelector('#game')
+  const { scrollSpeed } = config
 
-function notesInColumn (notes, column) {
-  return notes
-    .filter(note => note.column === column)
-    .map(createNote)
-    .sort((a, b) => b.time - a.time)
-}
-
-export function Notefield (params) {
-  const {
-    keyColors,
-    scrollSpeed = 1,
-    height: fieldHeight,
-    columns: columnCount,
-    notes: noteData
-  } = params
-
-  const columns = keyColors.map((color, index) => {
-    return createColumn(color, notesInColumn(noteData, index))
-  })
   const explosion = NoteExplosion()
   const judgement = Judgement()
+
+  const columns = range(0, columnCount - 1).map(n => {
+    return {
+      pressed: false,
+      brightness: 0,
+      color: columnColors[n],
+      notes: []
+    }
+  })
+
+  for (const note of song.notes) {
+    const { time, column } = note
+    columns[column].notes.push({ time, column, judgement: null })
+  }
 
   let songTime = -2
 
   function getReceptorPosition (columnIndex) {
-    return [(columnIndex + 0.5) * columnWidth, fieldHeight - keyHeight]
+    return [ (columnIndex + 0.5) * columnWidth, fieldHeight - keyHeight ]
   }
 
-  function checkTap (column, columnIndex) {
+  function checkTap (column) {
     const currentNote = tail(column.notes)
     if (currentNote) {
       const timing = songTime - currentNote.time
       const level = getJudgement(timing)
       if (level !== JudgeLevels.break) {
         column.notes.pop()
-        explosion.trigger(...getReceptorPosition(columnIndex))
         judgement.trigger(level)
+        return true
       }
     }
   }
@@ -93,7 +79,9 @@ export function Notefield (params) {
 
   function press (columnIndex) {
     const column = columns[columnIndex]
-    checkTap(column, columnIndex)
+    if (checkTap(column)) {
+      explosion.trigger(...getReceptorPosition(columnIndex))
+    }
     column.pressed = true
   }
 
