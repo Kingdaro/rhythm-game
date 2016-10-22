@@ -1,5 +1,5 @@
 import {Scene, FillColor, FillCircle, Translate, RotateDegrees} from './rendering'
-import {rgb, Red, Orange, Gold, Green, Blue, Violet} from './color'
+import {Red, Orange, Gold, Green, Blue, Violet} from './color'
 
 const colors = [Red, Orange, Gold, Green, Blue, Violet]
 

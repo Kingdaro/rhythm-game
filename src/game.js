@@ -2,7 +2,7 @@ import {Background} from './background'
 import {Notefield} from './notefield'
 import {Timer} from './timer'
 import {Scene} from './rendering'
-import {rgb, Gold, Cloudy, Violet} from './color'
+import {Gold, Cloudy, Violet} from './color'
 
 const bindings = [
   'KeyA',
@@ -10,7 +10,7 @@ const bindings = [
   'KeyD',
   'KeyK',
   'KeyL',
-  'KeySemi',
+  'KeySemi'
 ]
 
 export function clear (ctx) {
@@ -32,11 +32,11 @@ export function Game (ctx) {
       { column: 2, time: 2 },
       { column: 3, time: 3 },
       { column: 4, time: 4 },
-      { column: 5, time: 5 },
+      { column: 5, time: 5 }
     ],
     columns: 6,
     keyColors: [ Gold, Cloudy, Violet, Cloudy, Violet, Cloudy ],
-    scrollSpeed: 3,
+    scrollSpeed: 3
   })
 
   const bg = Background(width, height)

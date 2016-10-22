@@ -11,6 +11,7 @@
     "dev:server": "browser-sync start --server --files *.html bundle.js *.css"
   },
   "devDependencies": {
+    "babel-eslint": "^7.0.0",
     "babel-preset-env": "^0.0.6",
     "browser-sync": "^2.17.5",
     "npm-run-all": "^3.1.1",
@@ -18,5 +19,8 @@
     "rollup-plugin-babel": "^2.6.1",
     "rollup-watch": "^2.5.0",
     "standard": "^8.4.0"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   }
 }

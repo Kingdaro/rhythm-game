@@ -16,7 +16,7 @@ export function FillRect (x, y, width, height) {
   }
 }
 
-export function StrokeRect(x, y, width, height) {
+export function StrokeRect (x, y, width, height) {
   return function draw (ctx) {
     ctx.strokeRect(x, y, width, height)
   }
@@ -75,7 +75,7 @@ export function Font (font) {
 }
 
 export function TextAlign (align) {
-  return function draw (ctx)  {
+  return function draw (ctx) {
     ctx.textAlign = align
   }
 }

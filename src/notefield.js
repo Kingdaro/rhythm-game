@@ -4,10 +4,7 @@ import {
   FillColor,
   FillRect,
   StrokeStyle,
-  StrokeRect,
-  FillText,
-  Font,
-  TextAlign,
+  StrokeRect
 } from './rendering'
 
 import {NoteExplosion} from './note-explosion'
@@ -28,7 +25,6 @@ const noteSpacing = 100 // pixels per second
 const backgroundColor = rgba(0, 0, 0, 0.9)
 const borderColor = rgba(255, 255, 255, 0.8)
 const dividerColor = rgba(255, 255, 255, 0.1)
-const keyBorderColor = rgba(0, 0, 0, 0.2)
 
 export function Notefield (params) {
   const {
@@ -36,7 +32,7 @@ export function Notefield (params) {
     scrollSpeed = 1,
     height: fieldHeight,
     columns: columnCount,
-    notes: noteData,
+    notes: noteData
   } = params
 
   const notes = noteData.map(createNote)
