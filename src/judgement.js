@@ -26,26 +26,23 @@ export function Judgement () {
     if (lastJudgement == null) {
       return Scene()
     } else if (lastJudgement !== JudgeLevels.break) {
-      const {text, color} = lastJudgement
       const opacity = clamp(animation * 5, 0, 1)
       const offset = (animation ** 8) * 20
-      return Scene(
-        FillColor(color.opacity(opacity)),
-        Font('40pt Unica One'),
-        TextAlign('center'),
-        FillText(text, 0, offset),
-      )
+      return renderJudgement(lastJudgement, opacity, offset)
     } else {
-      const {text, color} = lastJudgement
       const opacity = clamp(animation * 2, 0, 1)
       const offset = (1 - animation) * 20
-      return Scene(
-        FillColor(color.opacity(opacity)),
-        Font('40pt Unica One'),
-        TextAlign('center'),
-        FillText(text, 0, offset),
-      )
+      return renderJudgement(lastJudgement, opacity, offset)
     }
+  }
+
+  function renderJudgement ({ text, color }, opacity, offset) {
+    return Scene(
+      FillColor(color.opacity(opacity)),
+      Font('40pt Unica One'),
+      TextAlign('center'),
+      FillText(text, 0, offset),
+    )
   }
 
   return { update, render, trigger }
