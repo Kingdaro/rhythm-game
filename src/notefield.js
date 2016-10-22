@@ -73,6 +73,22 @@ export function Notefield (params) {
     }
   }
 
+  function checkMiss (column) {
+    const currentNote = tail(column.notes)
+    if (currentNote && isMissed(songTime - currentNote.time)) {
+      column.notes.pop()
+      judgement.trigger(JudgeLevels.break)
+    }
+  }
+
+  function updateColumnBrightness (column, elapsed) {
+    if (column.pressed) {
+      column.brightness = 1
+    } else {
+      column.brightness = lerp(column.brightness, 0, elapsed * 20)
+    }
+  }
+
   function press (columnIndex) {
     const column = columns[columnIndex]
     checkTap(column, columnIndex)
@@ -87,11 +103,8 @@ export function Notefield (params) {
     songTime += elapsed
 
     columns.forEach(column => {
-      if (column.pressed) {
-        column.brightness = 1
-      } else {
-        column.brightness = lerp(column.brightness, 0, elapsed * 20)
-      }
+      updateColumnBrightness(column, elapsed)
+      checkMiss(column)
     })
 
     explosion.update(elapsed)
