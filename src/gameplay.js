@@ -45,17 +45,18 @@ export function Gameplay () {
     field.draw()
   }
 
-  function keydown ({ code, repeat }) {
-    if (!repeat) {
-      const index = bindings.indexOf(code)
-      if (index > -1) field.press(index)
-    }
+  function keydown (event) {
+    checkNotefieldInput(event, field.press)
   }
 
-  function keyup ({ code, repeat }) {
+  function keyup (event) {
+    checkNotefieldInput(event, field.lift)
+  }
+
+  function checkNotefieldInput ({ code, repeat }, action) {
     if (!repeat) {
       const index = bindings.indexOf(code)
-      if (index > -1) field.lift(index)
+      if (index > -1) action(index)
     }
   }
 
