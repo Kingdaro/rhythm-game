@@ -1,5 +1,5 @@
 import {Scene, Font, TextAlign, FillText, FillColor} from './rendering'
-import {lerp, clamp} from './util'
+import {clamp} from './util'
 import {Blue, Orange, Green, Red} from './color'
 
 export const JudgeLevels = {
@@ -26,11 +26,12 @@ export function Judgement () {
     if (lastJudgement != null) {
       const {text, color} = lastJudgement
       const opacity = clamp(animation * 5, 0, 1)
+      const offset = (animation ** 8) * 20
       return Scene(
         FillColor(color.opacity(opacity)),
         Font('40pt Unica One'),
         TextAlign('center'),
-        FillText(text, 0, (animation ** 8) * 20),
+        FillText(text, 0, offset),
       )
     } else {
       return Scene()
