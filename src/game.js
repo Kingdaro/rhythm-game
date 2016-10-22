@@ -2,11 +2,7 @@ import {Background} from './background'
 import {Notefield} from './notefield'
 import {Timer} from './timer'
 import {Scene} from './rendering'
-import {rgb} from './color'
-
-const gold = rgb(241, 196, 15)
-const white = rgb(236, 240, 241)
-const violet = rgb(155, 89, 182)
+import {rgb, Gold, Cloudy, Violet} from './color'
 
 const bindings = [
   'KeyS',
@@ -39,7 +35,7 @@ export function Game (ctx) {
       { column: 5, time: 5 },
     ],
     columns: 6,
-    keyColors: [ gold, white, violet, white, violet, white ],
+    keyColors: [ Gold, Cloudy, Violet, Cloudy, Violet, Cloudy ],
     scrollSpeed: 3,
   })
 

@@ -1,12 +1,12 @@
 import {Scene, Font, TextAlign, FillText, FillColor} from './rendering'
 import {lerp, clamp} from './util'
-import {rgb, White} from './color'
+import {rgb, White, Blue, Orange, Green, Red} from './color'
 
 export const JudgeLevels = {
-  absolute: { text: 'ABSOLUTE', color: rgb(231, 76, 60), window: 0.03 },
-  perfect: { text: 'PERFECT', color: rgb(231, 76, 60), window: 0.1 },
-  good: { text: 'GOOD', color: rgb(231, 76, 60), window: 0.2 },
-  break: { text: 'BREAK', color: rgb(231, 76, 60) },
+  absolute: { text: 'ABSOLUTE', color: Blue, window: 15 / 1000 },
+  perfect: { text: 'PERFECT', color: Orange, window: 70 / 1000 },
+  good: { text: 'GOOD', color: Green, window: 130 / 1000 },
+  break: { text: 'BREAK', color: Red },
 }
 
 export function Judgement () {

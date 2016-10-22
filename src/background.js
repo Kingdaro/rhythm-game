@@ -1,14 +1,7 @@
 import {Scene, FillColor, FillCircle, Translate, RotateDegrees} from './rendering'
-import {rgb} from './color'
+import {rgb, Red, Orange, Gold, Green, Blue, Violet} from './color'
 
-const colors = [
-  rgb(231, 76, 60),
-  rgb(52, 152, 219),
-  rgb(46, 204, 113),
-  rgb(230, 126, 34),
-  rgb(155, 89, 182),
-  rgb(241, 196, 15),
-]
+const colors = [Red, Orange, Gold, Green, Blue, Violet]
 
 export function Background (width, height) {
   // private
