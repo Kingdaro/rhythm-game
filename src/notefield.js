@@ -1,8 +1,8 @@
-import { Scene, Translate, FillColor, FillRect, StrokeStyle, StrokeRect } from './rendering'
 import { NoteExplosion } from './note-explosion'
 import { Judgement, JudgeLevels, getJudgement, isMissed } from './judgement'
 import { White, Black, Gold, Cloudy, Violet } from './color'
 import { lerp, range, tail } from './util'
+import * as canvas from './canvas'
 
 const columnCount = 6
 const columnWidth = 50
@@ -101,108 +101,105 @@ export function Notefield (song, config) {
     judgement.update(elapsed)
   }
 
-  function render () {
+  function draw () {
     const fieldWidth = columnWidth * columnCount
-    return Scene(
+
+    canvas.batch(() => {
       // origin at notefield position
-      Translate(position, 0),
+      canvas.translate(position, 0)
 
       // background shade
-      Scene(
-        FillColor(backgroundColor),
-        FillRect(0, 0, fieldWidth, fieldHeight),
-      ),
+      canvas.batch(() => {
+        canvas.setFillColor(backgroundColor)
+        canvas.fillRect(0, 0, fieldWidth, fieldHeight)
+      })
 
       // column dividers
-      Scene(
-        FillColor(dividerColor),
-        ...range(1, columnCount - 1).map(renderColumnDivider),
-      ),
+      canvas.batch(() => {
+        canvas.setFillColor(dividerColor)
+        for (let i = 1; i < columnCount; i++) {
+          drawColumnDivider(i)
+        }
+      })
 
       // notefield edges
-      Scene(
-        FillColor(borderColor),
-        Translate(-borderWidth, 0),
-        FillRect(0, 0, borderWidth, fieldHeight),
-        Translate(fieldWidth + borderWidth, 0),
-        FillRect(0, 0, borderWidth, fieldHeight),
-      ),
+      canvas.batch(() => {
+        canvas.setFillColor(borderColor)
+        canvas.translate(-borderWidth, 0)
+        canvas.fillRect(0, 0, borderWidth, fieldHeight)
+        canvas.translate(fieldWidth + borderWidth)
+        canvas.fillRect(0, 0, borderWidth, fieldHeight)
+      })
 
       // backlights
-      Scene(...columns.map(renderBacklight)),
+      canvas.batch(() => {
+        columns.forEach(drawBacklight)
+      })
 
       // receptors
-      Scene(
-        Translate(0, fieldHeight - keyHeight - receptorHeight),
-        ...columns.map(renderReceptor),
-      ),
+      canvas.batch(() => {
+        canvas.translate(0, fieldHeight - keyHeight - receptorHeight)
+        columns.forEach(drawReceptor)
+      })
 
       // notes
-      Scene(
-        Translate(0, fieldHeight - keyHeight - receptorHeight),
-        ...columns.map(col => Scene(...col.notes.map(renderNote))),
-      ),
+      canvas.batch(() => {
+        canvas.translate(0, fieldHeight - keyHeight - receptorHeight)
+        for (const col of columns) {
+          col.notes.map(drawNote)
+        }
+      })
 
       // keys
-      Scene(
-        Translate(0, fieldHeight - keyHeight),
-        ...columns.map(renderKey),
-      ),
+      canvas.batch(() => {
+        canvas.translate(0, fieldHeight - keyHeight)
+        columns.forEach(drawKey)
+      })
 
       // note explosions
-      explosion.render(),
+      explosion.draw()
 
       // judgement
-      Scene(
-        Translate(fieldWidth / 2, fieldHeight / 2 + 100),
-        judgement.render(),
-      ),
-    )
+      canvas.batch(() => {
+        canvas.translate(fieldWidth / 2, fieldHeight / 2 + 100)
+        judgement.draw()
+      })
+    })
   }
 
-  function renderColumnDivider (col) {
+  function drawColumnDivider (col) {
     const x = columnWidth * col - dividerWidth / 2
-    return FillRect(x, 0, dividerWidth, fieldHeight)
+    canvas.fillRect(x, 0, dividerWidth, fieldHeight)
   }
 
-  function renderReceptor ({ color, brightness }, index) {
+  function drawReceptor ({ color, brightness }, index) {
     const opacity = lerp(0.3, 0.6, brightness)
-    return Scene(
-      FillColor(color.opacity(opacity).toString()),
-      FillRect(index * columnWidth, 0, columnWidth, receptorHeight),
-    )
+    canvas.setFillColor(color.opacity(opacity))
+    canvas.fillRect(index * columnWidth, 0, columnWidth, receptorHeight)
   }
 
-  function renderBacklight ({ color, brightness }, index) {
+  function drawBacklight ({ color, brightness }, index) {
     const opacity = lerp(0.03, 0.15, brightness)
-    return Scene(
-      FillColor(color.opacity(opacity).toString()),
-      FillRect(index * columnWidth, 0, columnWidth, fieldHeight)
-    )
+    canvas.setFillColor(color.opacity(opacity))
+    canvas.fillRect(index * columnWidth, 0, columnWidth, fieldHeight)
   }
 
-  function renderNote ({ time, column }) {
+  function drawNote ({ time, column }) {
     const x = column * columnWidth
     const y = (time - songTime) * noteSpacing * scrollSpeed
-    return Scene(
-      FillColor(columns[column].color),
-      FillRect(x, -y, columnWidth, noteHeight),
-    )
+    canvas.setFillColor(columns[column].color)
+    canvas.fillRect(x, -y, columnWidth, noteHeight)
   }
 
-  function renderKey ({ color, brightness }, index) {
+  function drawKey ({ color, brightness }, index) {
     const dim = lerp(0.3, 0, brightness)
-    return Scene(
-      // rectangle body
-      FillColor(color.darken(dim)),
-      FillRect(columnWidth * index, 0, columnWidth, keyHeight),
+    canvas.setFillColor(color.darken(dim))
+    canvas.fillRect(columnWidth * index, 0, columnWidth, keyHeight)
 
-      // darkened edge
-      StrokeStyle(color.darken(dim + 0.2), keyBorderWidth),
-      StrokeRect(columnWidth * index + keyBorderWidth / 2, keyBorderWidth / 2,
-        columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
-    )
+    canvas.setStroke(color.darken(dim + 0.2), keyBorderWidth)
+    canvas.strokeRect(columnWidth * index + keyBorderWidth / 2, keyBorderWidth / 2,
+      columnWidth - keyBorderWidth, keyHeight - keyBorderWidth)
   }
 
-  return { update, render, press, lift }
+  return { update, draw, press, lift }
 }

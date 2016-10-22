@@ -1,5 +1,6 @@
-import {Scene, FillColor, FillCircle, Translate, RotateDegrees} from './rendering'
-import {Red, Orange, Gold, Green, Blue, Violet} from './color'
+import * as canvas from './canvas'
+import { Red, Orange, Gold, Green, Blue, Violet } from './color'
+import { degrees } from './util'
 
 const colors = [Red, Orange, Gold, Green, Blue, Violet]
 
@@ -20,6 +21,13 @@ export function Background (width, height) {
     shape.x += dx
     shape.y += dy
     return shape
+  }
+
+  function drawShape ({ x, y, size, color }) {
+    canvas.translate(x, y)
+    canvas.rotate(-90)
+    canvas.setFillColor(color)
+    canvas.circle(0, 0, size * 20, 3)
   }
 
   function moveShapes (elapsed) {
@@ -46,18 +54,11 @@ export function Background (width, height) {
     shapes = cullShapes()
   }
 
-  function render () {
-    return Scene(
-      ...shapes.map(({ x, y, size, color }) => {
-        return Scene(
-          Translate(x, y),
-          RotateDegrees(-90),
-          FillColor(color),
-          FillCircle(0, 0, size * 30, 3),
-        )
-      })
-    )
+  function draw () {
+    for (const shape of shapes) {
+      canvas.batch(drawShape, shape)
+    }
   }
 
-  return { update, render }
+  return { update, draw }
 }

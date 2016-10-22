@@ -1,7 +1,6 @@
 import {Gamestate} from './game'
 import {Background} from './background'
 import {Notefield} from './notefield'
-import {Scene} from './rendering'
 
 const bindings = [
   'KeyA',
@@ -45,9 +44,9 @@ export function Gameplay () {
   }
 
   function draw (ctx) {
-    const rendered = Scene(bg.render(), field.render())
     clear(ctx)
-    rendered(ctx)
+    bg.draw()
+    field.draw()
   }
 
   function keydown (event) {

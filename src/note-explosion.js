@@ -1,4 +1,4 @@
-import {Scene, FillColor, FillCircle, Translate, RotateDegrees, Shadow} from './rendering'
+import * as canvas from './canvas'
 import {White} from './color'
 import {lerp} from './util'
 
@@ -33,21 +33,19 @@ export function NoteExplosion () {
     particles = particles.filter(p => p.life > 0)
   }
 
-  function render () {
-    return Scene(
-      ...particles.map(renderParticle),
-    )
+  function draw () {
+    particles.forEach(drawParticle)
   }
 
-  function renderParticle ({ x, y, ox, oy, life }) {
-    return Scene(
-      Translate(ox + x, oy + y),
-      RotateDegrees(-90),
-      Shadow(0, 0, 8, White.opacity(life)),
-      FillColor(White.opacity(life)),
-      FillCircle(0, 0, 8, 3),
-    )
+  function drawParticle ({ x, y, ox, oy, life }) {
+    canvas.batch(() => {
+      canvas.translate(ox + x, oy + y)
+      canvas.rotate(-90)
+      canvas.setShadow(0, 0, 8, White.opacity(life))
+      canvas.setFillColor(White.opacity(life))
+      canvas.circle(0, 0, 8, 3)
+    })
   }
 
-  return { update, render, trigger }
+  return { update, draw, trigger }
 }

@@ -1,4 +1,4 @@
-import {Scene, Font, TextAlign, FillText, FillColor} from './rendering'
+import * as canvas from './canvas'
 import {clamp} from './util'
 import {Blue, Orange, Green, Red} from './color'
 
@@ -22,30 +22,30 @@ export function Judgement () {
     animation = clamp(animation - (elapsed / 0.8), 0, 1)
   }
 
-  function render () {
-    if (lastJudgement == null) {
-      return Scene()
-    } else if (lastJudgement !== JudgeLevels.break) {
-      const opacity = clamp(animation * 5, 0, 1)
-      const offset = (animation ** 8) * 20
-      return renderJudgement(lastJudgement, opacity, offset)
-    } else {
-      const opacity = clamp(animation * 2, 0, 1)
-      const offset = (1 - animation) * 20
-      return renderJudgement(lastJudgement, opacity, offset)
+  function draw () {
+    if (lastJudgement != null) {
+      let opacity, offset
+      if (lastJudgement !== JudgeLevels.break) {
+        opacity = clamp(animation * 5, 0, 1)
+        offset = (animation ** 8) * 20
+      } else {
+        opacity = clamp(animation * 2, 0, 1)
+        offset = (1 - animation) * 20
+      }
+      drawJudgement(lastJudgement, opacity, offset)
     }
   }
 
-  function renderJudgement ({ text, color }, opacity, offset) {
-    return Scene(
-      FillColor(color.opacity(opacity)),
-      Font('40pt Unica One'),
-      TextAlign('center'),
-      FillText(text, 0, offset),
-    )
+  function drawJudgement ({ text, color }, opacity, offset) {
+    canvas.batch(() => {
+      canvas.setFillColor(color.opacity(opacity))
+      canvas.setFont('40pt Unica One')
+      canvas.setTextAlign('center')
+      canvas.fillText(text, 0, offset)
+    })
   }
 
-  return { update, render, trigger }
+  return { update, draw, trigger }
 }
 
 export function getJudgement (timing) {
