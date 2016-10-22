@@ -37,6 +37,11 @@ export function fillText (text, x, y) {
   ctx.fillText(text, x, y)
 }
 
+export function clear (color) {
+  ctx.fillStyle = color.toString()
+  ctx.fillRect(0, 0, width, height)
+}
+
 // graphics state
 export function setFillColor (color) {
   ctx.fillStyle = color.toString()

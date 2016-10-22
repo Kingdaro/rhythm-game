@@ -16,8 +16,8 @@ export function Game (initialState) {
     }
   }
 
-  function draw (ctx) {
-    state.draw(ctx)
+  function draw () {
+    state.draw()
   }
 
   function keydown (event) {

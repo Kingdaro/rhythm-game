@@ -1,6 +1,8 @@
-import {Gamestate} from './game'
-import {Background} from './background'
-import {Notefield} from './notefield'
+import { Gamestate } from './game'
+import { Background } from './background'
+import { Notefield } from './notefield'
+import { White } from './color'
+import { clear } from './canvas'
 
 const bindings = [
   'KeyA',
@@ -10,12 +12,6 @@ const bindings = [
   'KeyL',
   'Semicolon'
 ]
-
-export function clear (ctx) {
-  const {width, height} = ctx.canvas
-  ctx.fillStyle = 'white'
-  ctx.fillRect(0, 0, width, height)
-}
 
 export function Gameplay () {
   const {width, height} = document.querySelector('#game')
@@ -43,8 +39,8 @@ export function Gameplay () {
     field.update(elapsed)
   }
 
-  function draw (ctx) {
-    clear(ctx)
+  function draw () {
+    clear(White)
     bg.draw()
     field.draw()
   }
