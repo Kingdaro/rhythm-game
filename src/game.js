@@ -5,12 +5,12 @@ import {Scene} from './rendering'
 import {rgb, Gold, Cloudy, Violet} from './color'
 
 const bindings = [
+  'KeyA',
   'KeyS',
   'KeyD',
-  'KeyF',
-  'KeyJ',
   'KeyK',
   'KeyL',
+  'KeySemi',
 ]
 
 export function clear (ctx) {
