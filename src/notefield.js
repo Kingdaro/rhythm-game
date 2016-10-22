@@ -114,12 +114,12 @@ export function Notefield (song, config) {
       })
 
       // column dividers
-      canvas.batch(() => {
-        canvas.setFillColor(dividerColor)
-        for (let i = 1; i < columnCount; i++) {
-          drawColumnDivider(i)
-        }
-      })
+      // canvas.batch(() => {
+      //   canvas.setFillColor(dividerColor)
+      //   for (let i = 1; i < columnCount; i++) {
+      //     drawColumnDivider(i)
+      //   }
+      // })
 
       // notefield edges
       canvas.batch(() => {
