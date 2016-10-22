@@ -10,33 +10,31 @@ export const JudgeLevels = {
 }
 
 export function Judgement () {
-  let visualOffset = 0
-  let opacity = 0
+  let animation = 1
   let lastJudgement
 
+  function trigger (score) {
+    animation = 1
+    lastJudgement = score
+  }
+
   function update (elapsed) {
-    visualOffset = lerp(visualOffset, 0, elapsed * 10)
-    opacity -= elapsed * 5
+    animation -= elapsed
   }
 
   function render () {
     if (lastJudgement != null) {
       const {text, color} = lastJudgement
+      const opacity = clamp(animation * 5, 0, 1)
       return Scene(
-        FillColor(color.opacity(clamp(opacity, 0, 1))),
+        FillColor(color.opacity(opacity)),
         Font('40pt Unica One'),
         TextAlign('center'),
-        FillText(text, 0, visualOffset * 20),
+        FillText(text, 0, (animation ** 8) * 20),
       )
     } else {
       return Scene()
     }
-  }
-
-  function trigger (score) {
-    visualOffset = 1
-    opacity = 4
-    lastJudgement = score
   }
 
   return { update, render, trigger }
