@@ -3,7 +3,11 @@ import { degrees } from './util'
 const { cos, sin, PI } = Math
 const TAU = PI * 2
 
-export const ctx = document.querySelector('#game').getContext('2d')
+export const element = document.querySelector('#game')
+export const ctx = element.getContext('2d')
+
+export const width = element.width
+export const height = element.height
 
 // drawing
 export function circle (x, y, radius, sides = 0) {

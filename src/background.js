@@ -1,17 +1,16 @@
 import * as canvas from './canvas'
 import { Red, Orange, Gold, Green, Blue, Violet } from './color'
-import { degrees } from './util'
 
-const colors = [Red, Orange, Gold, Green, Blue, Violet]
+const colors = [ Red, Orange, Gold, Green, Blue, Violet ]
 
-export function Background (width, height) {
+export function Background () {
   // private
   let shapes = []
   let timer = 0
 
   function addShape () {
-    const x = Math.random() * width
-    const y = height + 100
+    const x = Math.random() * canvas.width
+    const y = canvas.height + 100
     const size = Math.random() * 2 + 2
     const color = colors[ Math.floor(Math.random() * colors.length) ]
     shapes.push({ x, y, size, color })

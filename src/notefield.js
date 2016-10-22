@@ -22,7 +22,6 @@ const dividerColor = White.opacity(0.1)
 const columnColors = [ Gold, Cloudy, Violet, Cloudy, Violet, Cloudy ]
 
 export function Notefield (song, config) {
-  const { height: fieldHeight } = document.querySelector('#game')
   const { scrollSpeed } = config
 
   const explosion = NoteExplosion()
@@ -45,7 +44,7 @@ export function Notefield (song, config) {
   let songTime = -2
 
   function getReceptorPosition (columnIndex) {
-    return [ (columnIndex + 0.5) * columnWidth, fieldHeight - keyHeight ]
+    return [ (columnIndex + 0.5) * columnWidth, canvas.height - keyHeight ]
   }
 
   function checkTap (column) {
@@ -111,7 +110,7 @@ export function Notefield (song, config) {
       // background shade
       canvas.batch(() => {
         canvas.setFillColor(backgroundColor)
-        canvas.fillRect(0, 0, fieldWidth, fieldHeight)
+        canvas.fillRect(0, 0, fieldWidth, canvas.height)
       })
 
       // column dividers
@@ -126,9 +125,9 @@ export function Notefield (song, config) {
       canvas.batch(() => {
         canvas.setFillColor(borderColor)
         canvas.translate(-borderWidth, 0)
-        canvas.fillRect(0, 0, borderWidth, fieldHeight)
-        canvas.translate(fieldWidth + borderWidth)
-        canvas.fillRect(0, 0, borderWidth, fieldHeight)
+        canvas.fillRect(0, 0, borderWidth, canvas.height)
+        canvas.translate(fieldWidth + borderWidth, 0)
+        canvas.fillRect(0, 0, borderWidth, canvas.height)
       })
 
       // backlights
@@ -138,13 +137,13 @@ export function Notefield (song, config) {
 
       // receptors
       canvas.batch(() => {
-        canvas.translate(0, fieldHeight - keyHeight - receptorHeight)
+        canvas.translate(0, canvas.height - keyHeight - receptorHeight)
         columns.forEach(drawReceptor)
       })
 
       // notes
       canvas.batch(() => {
-        canvas.translate(0, fieldHeight - keyHeight - receptorHeight)
+        canvas.translate(0, canvas.height - keyHeight - receptorHeight)
         for (const col of columns) {
           col.notes.map(drawNote)
         }
@@ -152,7 +151,7 @@ export function Notefield (song, config) {
 
       // keys
       canvas.batch(() => {
-        canvas.translate(0, fieldHeight - keyHeight)
+        canvas.translate(0, canvas.height - keyHeight)
         columns.forEach(drawKey)
       })
 
@@ -161,7 +160,7 @@ export function Notefield (song, config) {
 
       // judgement
       canvas.batch(() => {
-        canvas.translate(fieldWidth / 2, fieldHeight / 2 + 100)
+        canvas.translate(fieldWidth / 2, canvas.height / 2 + 100)
         judgement.draw()
       })
     })
@@ -169,7 +168,7 @@ export function Notefield (song, config) {
 
   function drawColumnDivider (col) {
     const x = columnWidth * col - dividerWidth / 2
-    canvas.fillRect(x, 0, dividerWidth, fieldHeight)
+    canvas.fillRect(x, 0, dividerWidth, canvas.height)
   }
 
   function drawReceptor ({ color, brightness }, index) {
@@ -181,7 +180,7 @@ export function Notefield (song, config) {
   function drawBacklight ({ color, brightness }, index) {
     const opacity = lerp(0.03, 0.15, brightness)
     canvas.setFillColor(color.opacity(opacity))
-    canvas.fillRect(index * columnWidth, 0, columnWidth, fieldHeight)
+    canvas.fillRect(index * columnWidth, 0, columnWidth, canvas.height)
   }
 
   function drawNote ({ time, column }) {
