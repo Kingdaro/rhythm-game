@@ -112,10 +112,10 @@ export function Notefield (params) {
       // notefield edges
       Scene(
         FillColor(borderColor),
-        Translate(-borderWidth),
-        FillRect(-dividerWidth / 2, 0, dividerWidth, fieldHeight),
-        Translate(fieldWidth + borderWidth),
-        FillRect(-dividerWidth / 2, 0, dividerWidth, fieldHeight),
+        Translate(-borderWidth, 0),
+        FillRect(0, 0, borderWidth, fieldHeight),
+        Translate(fieldWidth + borderWidth, 0),
+        FillRect(0, 0, borderWidth, fieldHeight),
       ),
 
       // backlights
