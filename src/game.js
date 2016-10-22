@@ -33,7 +33,7 @@ export function Game (initialState) {
   return { update, draw, keydown, keyup }
 }
 
-export function Gamestate () {
+export function Gamestate (methods) {
   return {
     enter () {},
     leave () {},
@@ -41,6 +41,7 @@ export function Gamestate () {
     draw () {},
     keydown () {},
     keyup () {},
-    getNewState () {}
+    getNewState () {},
+    ...methods
   }
 }

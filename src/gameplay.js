@@ -60,5 +60,5 @@ export function Gameplay () {
     if (index > -1) field.lift(index)
   }
 
-  return { ...Gamestate(), update, draw, keydown, keyup }
+  return Gamestate({ update, draw, keydown, keyup })
 }
