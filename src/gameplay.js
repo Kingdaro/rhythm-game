@@ -14,7 +14,7 @@ const bindings = [
 ]
 
 export function Gameplay () {
-  const {width, height} = document.querySelector('#game')
+  const { width, height } = document.querySelector('#game')
 
   const song = {
     title: 'random song',
