@@ -8,7 +8,7 @@ import {
 } from './rendering'
 
 import {NoteExplosion} from './note-explosion'
-import {Judgement, JudgeLevels, getJudgement, isMissed } from './judgement'
+import {Judgement, JudgeLevels, getJudgement, isMissed} from './judgement'
 import {White, Black} from './color'
 import {lerp, range, tail} from './util'
 
@@ -54,26 +54,33 @@ export function Notefield (params) {
     return { color, pressed: false, brightness: 0, notes }
   }
 
-  function press (colnum) {
-    const column = columns[colnum]
-    const currentNote = tail(column.notes)
+  function getReceptorPosition (columnIndex) {
+    return [(columnIndex + 0.5) * columnWidth, fieldHeight - keyHeight]
+  }
 
+  function checkTap (column, columnIndex) {
+    const currentNote = tail(column.notes)
     if (currentNote) {
       const timing = songTime - currentNote.time
       const level = getJudgement(timing)
 
       if (level !== JudgeLevels.break) {
         column.notes.pop()
-        explosion.trigger((colnum + 0.5) * columnWidth, fieldHeight - keyHeight)
+        explosion.trigger(...getReceptorPosition(columnIndex))
         judgement.trigger(level)
       }
     }
-
-    column.pressed = true
   }
 
-  function lift (colnum) {
-    columns[colnum].pressed = false
+  function press (columnIndex) {
+    const column = columns[columnIndex]
+
+    column.pressed = true
+    checkTap(column, columnIndex)
+  }
+
+  function lift (columnIndex) {
+    columns[columnIndex].pressed = false
   }
 
   function update (elapsed) {
