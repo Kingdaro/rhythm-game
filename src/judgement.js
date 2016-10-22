@@ -2,17 +2,17 @@ import {Scene, Font, TextAlign, FillText, FillColor} from './rendering'
 import {lerp, clamp} from './util'
 import {rgb, White} from './color'
 
-const judgements = [
-  { text: 'BREAK', color: rgb(231, 76, 60) },
-  { text: 'GOOD', color: rgb(46, 204, 113) },
-  { text: 'PERFECT', color: rgb(241, 196, 15) },
-  { text: 'ABSOLUTE', color: rgb(52, 152, 219) },
-]
+export const JudgeLevels = {
+  absolute: { text: 'ABSOLUTE', color: rgb(231, 76, 60), window: 0.03 },
+  perfect: { text: 'PERFECT', color: rgb(231, 76, 60), window: 0.1 },
+  good: { text: 'GOOD', color: rgb(231, 76, 60), window: 0.2 },
+  break: { text: 'BREAK', color: rgb(231, 76, 60) },
+}
 
 export function Judgement () {
   let visualOffset = 0
   let opacity = 0
-  let lastJudgement = 3
+  let lastJudgement
 
   function update (elapsed) {
     visualOffset = lerp(visualOffset, 0, elapsed * 10)
@@ -20,13 +20,17 @@ export function Judgement () {
   }
 
   function render () {
-    const {text, color} = judgements[lastJudgement]
-    return Scene(
-      FillColor(color.opacity(clamp(opacity, 0, 1))),
-      Font('40pt Unica One'),
-      TextAlign('center'),
-      FillText(text, 0, visualOffset * 20),
-    )
+    if (lastJudgement != null) {
+      const {text, color} = lastJudgement
+      return Scene(
+        FillColor(color.opacity(clamp(opacity, 0, 1))),
+        Font('40pt Unica One'),
+        TextAlign('center'),
+        FillText(text, 0, visualOffset * 20),
+      )
+    } else {
+      return Scene()
+    }
   }
 
   function trigger (score) {
@@ -36,14 +40,10 @@ export function Judgement () {
   }
 
   function judgeTap (timing) {
-    if (timing <= 0.03) {
-      return 3
-    } else if (timing <= 0.1) {
-      return 2
-    } else if (timing <= 0.2) {
-      return 1
-    }
-    return 0
+    if (timing < JudgeLevels.absolute.window) return JudgeLevels.absolute
+    if (timing < JudgeLevels.perfect.window) return JudgeLevels.perfect
+    if (timing < JudgeLevels.good.window) return JudgeLevels.good
+    return JudgeLevels.break
   }
 
   return { update, render, trigger, judgeTap }

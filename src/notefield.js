@@ -11,7 +11,7 @@ import {
 } from './rendering'
 
 import {NoteExplosion} from './note-explosion'
-import {Judgement} from './judgement'
+import {Judgement, JudgeLevels} from './judgement'
 import {rgba} from './color'
 import {lerp, range} from './util'
 
@@ -76,11 +76,11 @@ export function Notefield (params) {
       const note = notes[i]
       if (note.column === column) {
         const timing = Math.abs(note.time - songTime)
-        const score = judgement.judgeTap(timing)
-        if (score > 0) {
+        const level = judgement.judgeTap(timing)
+        if (level !== JudgeLevels.break) {
           notes.splice(i, 1)
           explosion.trigger((column + 0.5) * columnWidth, fieldHeight - keyHeight)
-          judgement.trigger(score)
+          judgement.trigger(level)
           break
         }
       }
