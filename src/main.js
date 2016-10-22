@@ -1,7 +1,9 @@
 import {Game} from './game'
 import {Gameplay} from './gameplay'
 
-const game = Game(Gameplay())
+const game = Game()
+
+game.setState(Gameplay)
 
 window.requestAnimationFrame(function frame () {
   game.update()

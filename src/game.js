@@ -1,19 +1,12 @@
 import {Timer} from './timer'
 
-export function Game (initialState) {
+export function Game () {
   const timer = Timer()
-  let state = initialState
+  let state = Gamestate()
 
   function update () {
     const elapsed = timer.step()
     state.update(elapsed)
-
-    const newState = state.getNewState()
-    if (newState) {
-      state.leave()
-      newState.enter()
-      state = newState
-    }
   }
 
   function draw () {
@@ -28,20 +21,19 @@ export function Game (initialState) {
     state.keyup(event)
   }
 
-  state.enter()
+  function setState (newStateConstructor) {
+    state = newStateConstructor({ setState })
+  }
 
-  return { update, draw, keydown, keyup }
+  return { update, draw, keydown, keyup, setState }
 }
 
-export function Gamestate (methods) {
+export function Gamestate (methods = {}) {
   return {
-    enter () {},
-    leave () {},
     update () {},
     draw () {},
     keydown () {},
     keyup () {},
-    getNewState () {},
     ...methods
   }
 }
