@@ -3,10 +3,25 @@ import { Red, Orange, Gold, Green, Blue, Violet } from './color'
 
 const colors = [ Red, Orange, Gold, Green, Blue, Violet ]
 
+function Clock (limit) {
+  let time = 0
+
+  function update (elapsed) {
+    time += elapsed
+    if (time >= limit) {
+      time -= limit
+      return true
+    }
+    return false
+  }
+
+  return { update }
+}
+
 export function Background () {
   // private
   let shapes = []
-  let timer = 0
+  let clock = Clock(0.15)
 
   function addShape () {
     const x = Math.random() * canvas.width
@@ -14,12 +29,6 @@ export function Background () {
     const size = Math.random() * 2 + 2
     const color = colors[ Math.floor(Math.random() * colors.length) ]
     shapes.push({ x, y, size, color })
-  }
-
-  function moveShape (shape, dx, dy) {
-    shape.x += dx
-    shape.y += dy
-    return shape
   }
 
   function drawShape ({ x, y, size, color }) {
@@ -30,27 +39,21 @@ export function Background () {
   }
 
   function moveShapes (elapsed) {
-    const move = shape => moveShape(shape, 0, -shape.size * 40 * elapsed)
-    return shapes.map(move)
+    for (const shape of shapes) {
+      shape.y -= shape.size * 40 * elapsed
+    }
   }
 
   function cullShapes () {
-    return shapes.filter(shape => shape.y >= -100)
+    shapes = shapes.filter(shape => shape.y >= -100)
   }
 
   // public
   function update (elapsed) {
     if (elapsed > 1) return // no bullshit updates
-
-    timer += elapsed
-
-    if (timer >= 0.15) {
-      timer = 0
-      addShape()
-    }
-
-    shapes = moveShapes(elapsed)
-    shapes = cullShapes()
+    if (clock.update(elapsed)) addShape()
+    moveShapes(elapsed)
+    cullShapes()
   }
 
   function draw () {
