@@ -10,7 +10,7 @@ const bindings = [
   'KeyD',
   'KeyK',
   'KeyL',
-  'KeySemi'
+  'Semicolon'
 ]
 
 export function clear (ctx) {
