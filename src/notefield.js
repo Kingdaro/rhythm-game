@@ -9,7 +9,6 @@ import {
 
 import {NoteExplosion} from './note-explosion'
 import {Judgement, JudgeLevels, getJudgement, isMissed} from './judgement'
-import {EasingValue} from './easing-value'
 import {White, Black} from './color'
 import {lerp, range, tail} from './util'
 
@@ -53,7 +52,7 @@ export function Notefield (params) {
       .map(createNote)
       .sort((a, b) => b.time - a.time)
 
-    return { color, pressed: false, brightness: EasingValue(0), notes }
+    return { color, pressed: false, brightness: 0, notes }
   }
 
   function getReceptorPosition (columnIndex) {
@@ -78,19 +77,21 @@ export function Notefield (params) {
     const column = columns[columnIndex]
     checkTap(column, columnIndex)
     column.pressed = true
-    column.brightness.set(1)
   }
 
   function lift (columnIndex) {
     columns[columnIndex].pressed = false
-    columns[columnIndex].brightness.ease(0)
   }
 
   function update (elapsed) {
     songTime += elapsed
 
     columns.forEach(column => {
-      column.brightness.update(elapsed * 20)
+      if (column.pressed) {
+        column.brightness = 1
+      } else {
+        column.brightness = lerp(column.brightness, 0, elapsed * 20)
+      }
     })
 
     explosion.update(elapsed)
@@ -162,7 +163,7 @@ export function Notefield (params) {
   }
 
   function renderReceptor ({ color, brightness }, index) {
-    const opacity = lerp(0.3, 0.6, brightness.value)
+    const opacity = lerp(0.3, 0.6, brightness)
     return Scene(
       FillColor(color.opacity(opacity).toString()),
       FillRect(index * columnWidth, 0, columnWidth, receptorHeight),
@@ -170,7 +171,7 @@ export function Notefield (params) {
   }
 
   function renderBacklight ({ color, brightness }, index) {
-    const opacity = lerp(0.03, 0.15, brightness.value)
+    const opacity = lerp(0.03, 0.15, brightness)
     return Scene(
       FillColor(color.opacity(opacity).toString()),
       FillRect(index * columnWidth, 0, columnWidth, fieldHeight)
@@ -187,7 +188,7 @@ export function Notefield (params) {
   }
 
   function renderKey ({ color, brightness }, index) {
-    const dim = lerp(0.3, 0, brightness.value)
+    const dim = lerp(0.3, 0, brightness)
     return Scene(
       // rectangle body
       FillColor(color.darken(dim)),
