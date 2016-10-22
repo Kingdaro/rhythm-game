@@ -9,7 +9,7 @@ import {
 
 import {NoteExplosion} from './note-explosion'
 import {Judgement, JudgeLevels} from './judgement'
-import {rgba} from './color'
+import {White, Black} from './color'
 import {lerp, range} from './util'
 
 const columnWidth = 50
@@ -22,9 +22,9 @@ const receptorHeight = 24
 const noteHeight = receptorHeight
 const noteSpacing = 100 // pixels per second
 
-const backgroundColor = rgba(0, 0, 0, 0.9)
-const borderColor = rgba(255, 255, 255, 0.8)
-const dividerColor = rgba(255, 255, 255, 0.1)
+const backgroundColor = Black.opacity(0.9)
+const borderColor = White.opacity(0.8)
+const dividerColor = White.opacity(0.1)
 
 export function Notefield (params) {
   const {
