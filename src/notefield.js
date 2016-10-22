@@ -26,6 +26,21 @@ const backgroundColor = Black.opacity(0.9)
 const borderColor = White.opacity(0.8)
 const dividerColor = White.opacity(0.1)
 
+function createNote ({ time, column }) {
+  return { time, column, judgement: 'none' }
+}
+
+function createColumn (color, notes) {
+  return { color, pressed: false, brightness: 0, notes }
+}
+
+function notesInColumn (notes, column) {
+  return notes
+    .filter(note => note.column === column)
+    .map(createNote)
+    .sort((a, b) => b.time - a.time)
+}
+
 export function Notefield (params) {
   const {
     keyColors,
@@ -35,25 +50,13 @@ export function Notefield (params) {
     notes: noteData
   } = params
 
-  // const notes = noteData.map(createNote)
-  const columns = keyColors.map(createColumn)
+  const columns = keyColors.map((color, index) => {
+    return createColumn(color, notesInColumn(noteData, index))
+  })
   const explosion = NoteExplosion()
   const judgement = Judgement()
 
   let songTime = -2
-
-  function createNote ({ time, column }) {
-    return { time, column, judgement: 'none' }
-  }
-
-  function createColumn (color, index) {
-    const notes = noteData
-      .filter(note => note.column === index)
-      .map(createNote)
-      .sort((a, b) => b.time - a.time)
-
-    return { color, pressed: false, brightness: 0, notes }
-  }
 
   function getReceptorPosition (columnIndex) {
     return [(columnIndex + 0.5) * columnWidth, fieldHeight - keyHeight]
