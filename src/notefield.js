@@ -8,9 +8,9 @@ import {
 } from './rendering'
 
 import {NoteExplosion} from './note-explosion'
-import {Judgement, JudgeLevels} from './judgement'
+import {Judgement, JudgeLevels, getJudgement, isMissed } from './judgement'
 import {White, Black} from './color'
-import {lerp, range} from './util'
+import {lerp, range, tail} from './util'
 
 const columnWidth = 50
 const position = 220
@@ -35,7 +35,7 @@ export function Notefield (params) {
     notes: noteData
   } = params
 
-  const notes = noteData.map(createNote)
+  // const notes = noteData.map(createNote)
   const columns = keyColors.map(createColumn)
   const explosion = NoteExplosion()
   const judgement = Judgement()
@@ -46,8 +46,34 @@ export function Notefield (params) {
     return { time, column, judgement: 'none' }
   }
 
-  function createColumn (color) {
-    return { color, pressed: false, brightness: 0 }
+  function createColumn (color, index) {
+    const notes = noteData
+      .filter(note => note.column === index)
+      .map(createNote)
+      .sort((a, b) => b.time - a.time)
+    return { color, pressed: false, brightness: 0, notes }
+  }
+
+  function press (colnum) {
+    const column = columns[colnum]
+    const currentNote = tail(column.notes)
+
+    if (currentNote) {
+      const timing = songTime - currentNote.time
+      const level = getJudgement(timing)
+
+      if (level !== JudgeLevels.break) {
+        column.notes.pop()
+        explosion.trigger((colnum + 0.5) * columnWidth, fieldHeight - keyHeight)
+        judgement.trigger(level)
+      }
+    }
+
+    column.pressed = true
+  }
+
+  function lift (colnum) {
+    columns[colnum].pressed = false
   }
 
   function update (elapsed) {
@@ -63,28 +89,6 @@ export function Notefield (params) {
 
     explosion.update(elapsed)
     judgement.update(elapsed)
-  }
-
-  function press (column) {
-    columns[column].pressed = true
-
-    for (const i in notes) {
-      const note = notes[i]
-      if (note.column === column) {
-        const timing = Math.abs(note.time - songTime)
-        const level = judgement.judgeTap(timing)
-        if (level !== JudgeLevels.break) {
-          notes.splice(i, 1)
-          explosion.trigger((column + 0.5) * columnWidth, fieldHeight - keyHeight)
-          judgement.trigger(level)
-          break
-        }
-      }
-    }
-  }
-
-  function lift (column) {
-    columns[column].pressed = false
   }
 
   function render () {
@@ -126,7 +130,7 @@ export function Notefield (params) {
       // notes
       Scene(
         Translate(0, fieldHeight - keyHeight - receptorHeight),
-        ...notes.map(renderNote),
+        ...columns.map(col => Scene(...col.notes.map(renderNote))),
       ),
 
       // keys

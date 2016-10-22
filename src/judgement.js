@@ -39,12 +39,17 @@ export function Judgement () {
     lastJudgement = score
   }
 
-  function judgeTap (timing) {
-    if (timing < JudgeLevels.absolute.window) return JudgeLevels.absolute
-    if (timing < JudgeLevels.perfect.window) return JudgeLevels.perfect
-    if (timing < JudgeLevels.good.window) return JudgeLevels.good
-    return JudgeLevels.break
-  }
+  return { update, render, trigger }
+}
 
-  return { update, render, trigger, judgeTap }
+export function getJudgement (timing) {
+  const diff = Math.abs(timing)
+  if (diff < JudgeLevels.absolute.window) return JudgeLevels.absolute
+  if (diff < JudgeLevels.perfect.window) return JudgeLevels.perfect
+  if (diff < JudgeLevels.good.window) return JudgeLevels.good
+  return JudgeLevels.break
+}
+
+export function isMissed (timing) {
+  return timing > JudgeLevels.good.window
 }
