@@ -64,7 +64,6 @@ export function Notefield (params) {
     if (currentNote) {
       const timing = songTime - currentNote.time
       const level = getJudgement(timing)
-
       if (level !== JudgeLevels.break) {
         column.notes.pop()
         explosion.trigger(...getReceptorPosition(columnIndex))

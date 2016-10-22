@@ -1,69 +1,46 @@
-import {Background} from './background'
-import {Notefield} from './notefield'
 import {Timer} from './timer'
-import {Scene} from './rendering'
-import {Gold, Cloudy, Violet} from './color'
 
-const bindings = [
-  'KeyA',
-  'KeyS',
-  'KeyD',
-  'KeyK',
-  'KeyL',
-  'Semicolon'
-]
-
-export function clear (ctx) {
-  const {width, height} = ctx.canvas
-  ctx.fillStyle = 'white'
-  ctx.fillRect(0, 0, width, height)
-}
-
-export function Game (ctx) {
-  const {width, height} = ctx.canvas
-
+export function Game (initialState) {
   const timer = Timer()
+  let state = initialState
 
-  const field = Notefield({
-    height,
-    notes: [
-      { column: 0, time: 0 },
-      { column: 1, time: 1 },
-      { column: 2, time: 2 },
-      { column: 3, time: 3 },
-      { column: 4, time: 4 },
-      { column: 5, time: 5 }
-    ],
-    columns: 6,
-    keyColors: [ Gold, Cloudy, Violet, Cloudy, Violet, Cloudy ],
-    scrollSpeed: 3
-  })
-
-  const bg = Background(width, height)
-
-  function step () {
+  function update () {
     const elapsed = timer.step()
-    bg.update(elapsed)
-    field.update(elapsed)
+    state.update(elapsed)
 
-    const draw = Scene(
-      bg.render(),
-      field.render(),
-    )
+    const newState = state.getNewState()
+    if (newState) {
+      state.leave()
+      newState.enter()
+      state = newState
+    }
+  }
 
-    clear(ctx)
-    draw(ctx)
+  function draw (ctx) {
+    state.draw(ctx)
   }
 
   function keydown (event) {
-    const index = bindings.indexOf(event.code)
-    if (index > -1) field.press(index)
+    state.keydown(event)
   }
 
   function keyup (event) {
-    const index = bindings.indexOf(event.code)
-    if (index > -1) field.lift(index)
+    state.keyup(event)
   }
 
-  return { step, keydown, keyup }
+  state.enter()
+
+  return { update, draw, keydown, keyup }
+}
+
+export function Gamestate () {
+  return {
+    enter () {},
+    leave () {},
+    update () {},
+    draw () {},
+    keydown () {},
+    keyup () {},
+    getNewState () {}
+  }
 }
