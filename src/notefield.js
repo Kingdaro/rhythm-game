@@ -38,7 +38,7 @@ export function Notefield (song, config) {
 
   for (const note of song.notes) {
     const { time, column } = note
-    columns[column].notes.push({ time, column, judgement: null })
+    columns[column].notes.push({ time, column })
   }
 
   let songTime = -2
