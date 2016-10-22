@@ -19,11 +19,13 @@ export function Judgement () {
   }
 
   function update (elapsed) {
-    animation -= elapsed
+    animation = clamp(animation - (elapsed / 0.8), 0, 1)
   }
 
   function render () {
-    if (lastJudgement != null) {
+    if (lastJudgement == null) {
+      return Scene()
+    } else if (lastJudgement !== JudgeLevels.break) {
       const {text, color} = lastJudgement
       const opacity = clamp(animation * 5, 0, 1)
       const offset = (animation ** 8) * 20
@@ -34,7 +36,15 @@ export function Judgement () {
         FillText(text, 0, offset),
       )
     } else {
-      return Scene()
+      const {text, color} = lastJudgement
+      const opacity = clamp(animation * 2, 0, 1)
+      const offset = (1 - animation) * 20
+      return Scene(
+        FillColor(color.opacity(opacity)),
+        Font('40pt Unica One'),
+        TextAlign('center'),
+        FillText(text, 0, offset),
+      )
     }
   }
 
