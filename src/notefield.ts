@@ -29,10 +29,18 @@ class Column {
   notes: Note[] = []
   brightness = 0
 
-  constructor (public color: Color) {}
+  constructor (public color: Color, public key: string) {}
 
   addNote (time: number) {
     this.notes.push(new Note(time, this.color))
+  }
+
+  update (elapsed: number) {
+    if (input.isDown(this.key)) {
+      this.brightness = 1
+    } else {
+      this.brightness = lerp(this.brightness, 0, elapsed * 18)
+    }
   }
 
   draw (songTime: number) {
@@ -70,7 +78,9 @@ export class Notefield {
   columns: Column[] = []
 
   constructor () {
-    this.setColumns([Gold, Cloudy, Violet, Cloudy, Violet, Cloudy])
+    this.setColumns(
+      [Gold, Cloudy, Violet, Cloudy, Violet, Cloudy],
+      ['KeyA', 'KeyS', 'KeyD', 'KeyK', 'KeyL', 'Semicolon'])
 
     this.columns[0].addNote(0)
     this.columns[1].addNote(1)
@@ -80,20 +90,13 @@ export class Notefield {
     this.columns[5].addNote(5)
   }
 
-  setColumns (colors: Color[]) {
-    this.columns = colors.map(color => new Column(color))
+  setColumns (colors: Color[], keys: string[]) {
+    this.columns = colors.map((color, i) => new Column(color, keys[i]))
   }
 
   update (elapsed: number) {
     this.songTime += elapsed
-
-    this.columns.forEach((column, index) => {
-      if (input.isDown('key' + index)) {
-        column.brightness = 1
-      } else {
-        column.brightness = lerp(column.brightness, 0, elapsed * 20)
-      }
-    })
+    this.columns.forEach(col => col.update(elapsed))
   }
 
   draw () {
