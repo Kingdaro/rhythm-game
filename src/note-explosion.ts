@@ -9,7 +9,7 @@ class Particle {
   y: number
   tx: number
   ty: number
-  life: number
+  life = 1
 
   constructor (private ox: number, private oy: number) {
     const direction = random() * PI * 2
@@ -17,7 +17,6 @@ class Particle {
     this.y = sin(direction) * 10
     this.tx = this.x * lerp(1, 5, random())
     this.ty = this.y * lerp(1, 5, random())
-    this.life = 1
   }
 
   update (elapsed: number) {
