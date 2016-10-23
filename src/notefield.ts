@@ -16,7 +16,7 @@ const BorderColor = White.opacity(0.8)
 
 class Note {
   constructor (public time: number, public color: Color) {}
-  draw (songTime) {
+  draw (songTime: number) {
     canvas.layer(() => {
       canvas.fillRect(0, (-this.time + songTime) * NoteSpacing, ColumnWidth, -NoteHeight, this.color)
     })
