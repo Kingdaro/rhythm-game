@@ -1,7 +1,9 @@
 import * as canvas from './canvas'
+import * as input from './input'
 import {NoteExplosion} from './note-explosion'
 import {JudgementAnimation} from './judgement'
 import {Color, White, Black, Gold, Cloudy, Violet} from './color'
+import {lerp} from './util'
 // import {Clock} from './clock'
 
 const NotefieldPosition = 220
@@ -25,6 +27,7 @@ class Note {
 
 class Column {
   notes: Note[] = []
+  brightness = 0
 
   constructor (public color: Color) {}
 
@@ -35,12 +38,15 @@ class Column {
   draw (songTime: number) {
     // backlight
     canvas.layer(() => {
-      canvas.fillRect(0, 0, ColumnWidth, canvas.height, this.color.opacity(0.05))
+      const opacity = lerp(0.05, 0.15, this.brightness)
+      canvas.fillRect(0, 0, ColumnWidth, canvas.height, this.color.opacity(opacity))
     })
 
     // receptor
     canvas.layer(() => {
-      canvas.fillRect(0, canvas.height - KeyHeight, ColumnWidth, -NoteHeight, this.color.opacity(0.3))
+      const opacity = lerp(0.25, 0.45, this.brightness)
+      const color = this.color.opacity(opacity)
+      canvas.fillRect(0, canvas.height - KeyHeight, ColumnWidth, -NoteHeight, color)
     })
 
     // notes
@@ -51,7 +57,8 @@ class Column {
 
     // key
     canvas.layer(() => {
-      canvas.fillRect(0, canvas.height, ColumnWidth, -KeyHeight, this.color)
+      const value = lerp(0.8, 1.0, this.brightness)
+      canvas.fillRect(0, canvas.height, ColumnWidth, -KeyHeight, this.color.multiply(value))
     })
   }
 }
@@ -79,6 +86,14 @@ export class Notefield {
 
   update (elapsed: number) {
     this.songTime += elapsed
+
+    this.columns.forEach((column, index) => {
+      if (input.isDown('key' + index)) {
+        column.brightness = 1
+      } else {
+        column.brightness = lerp(column.brightness, 0, elapsed * 20)
+      }
+    })
   }
 
   draw () {

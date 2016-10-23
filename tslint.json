@@ -2,6 +2,7 @@
   "extends": "tslint-config-standard",
   "rules": {
     "trailing-comma": "off",
-    "curly": "off"
+    "curly": "off",
+    "align": "off"
   }
 }
