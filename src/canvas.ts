@@ -26,8 +26,8 @@ export function circle (x: number, y: number, radius: number, sides: number = 0)
   ctx.fill()
 }
 
-// TODO: add functions for setting color + drawing
-export function fillRect (x: number, y: number, width: number, height: number) {
+export function fillRect (x: number, y: number, width: number, height: number, color?: Color) {
+  if (color) setFillColor(color)
   ctx.fillRect(x, y, width, height)
 }
 

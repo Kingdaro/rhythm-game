@@ -18,8 +18,7 @@ class Note {
   constructor (public time: number, public color: Color) {}
   draw (songTime) {
     canvas.layer(() => {
-      canvas.setFillColor(this.color)
-      canvas.fillRect(0, (-this.time + songTime) * NoteSpacing, ColumnWidth, -NoteHeight)
+      canvas.fillRect(0, (-this.time + songTime) * NoteSpacing, ColumnWidth, -NoteHeight, this.color)
     })
   }
 }
@@ -36,14 +35,12 @@ class Column {
   draw (songTime: number) {
     // backlight
     canvas.layer(() => {
-      canvas.setFillColor(this.color.opacity(0.05))
-      canvas.fillRect(0, 0, ColumnWidth, canvas.height)
+      canvas.fillRect(0, 0, ColumnWidth, canvas.height, this.color.opacity(0.05))
     })
 
     // receptor
     canvas.layer(() => {
-      canvas.setFillColor(this.color.opacity(0.3))
-      canvas.fillRect(0, canvas.height - KeyHeight, ColumnWidth, -NoteHeight)
+      canvas.fillRect(0, canvas.height - KeyHeight, ColumnWidth, -NoteHeight, this.color.opacity(0.3))
     })
 
     // notes
@@ -54,8 +51,7 @@ class Column {
 
     // key
     canvas.layer(() => {
-      canvas.setFillColor(this.color)
-      canvas.fillRect(0, canvas.height, ColumnWidth, -KeyHeight)
+      canvas.fillRect(0, canvas.height, ColumnWidth, -KeyHeight, this.color)
     })
   }
 }
@@ -94,8 +90,7 @@ export class Notefield {
 
       // background shade
       canvas.layer(() => {
-        canvas.setFillColor(BackgroundColor)
-        canvas.fillRect(0, 0, fieldWidth, canvas.height)
+        canvas.fillRect(0, 0, fieldWidth, canvas.height, BackgroundColor)
       })
 
       // notefield edges
