@@ -5,7 +5,10 @@ export default {
   dest: 'bundle.js',
   plugins: [
     buble({
-      transforms: { dangerousForOf: true }
+      transforms: {
+        dangerousForOf: true
+      },
+      objectAssign: 'Object.assign'
     })
   ],
   format: 'iife',
