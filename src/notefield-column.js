@@ -18,39 +18,6 @@ export function NotefieldColumn (color, columnPosition, scrollSpeed) {
   let brightness = 0
   let notes = []
 
-  function drawReceptor () {
-    const opacity = lerp(0.3, 0.6, brightness)
-    canvas.setFillColor(color.opacity(opacity))
-    canvas.fillRect(0, canvas.height - keyHeight, columnWidth, -receptorHeight)
-  }
-
-  function drawBacklight () {
-    const opacity = lerp(0.03, 0.15, brightness)
-    canvas.setFillColor(color.opacity(opacity))
-    canvas.fillRect(0, 0, columnWidth, canvas.height)
-  }
-
-  function drawNote ({ time, column }, songTime) {
-    const y = canvas.height - keyHeight - (time - songTime) * noteSpacing * scrollSpeed
-    canvas.setFillColor(color)
-    canvas.fillRect(0, y, columnWidth, -noteHeight)
-  }
-
-  function drawKey () {
-    const dim = lerp(0.3, 0, brightness)
-
-    canvas.batch(() => {
-      canvas.translate(0, canvas.height)
-
-      canvas.setFillColor(color.darken(dim))
-      canvas.fillRect(0, 0, columnWidth, -keyHeight)
-
-      canvas.setStroke(color.darken(dim + 0.2), keyBorderWidth)
-      canvas.translate(keyBorderWidth / 2, -keyBorderWidth / 2)
-      canvas.strokeRect(0, 0, columnWidth - keyBorderWidth, -keyHeight + keyBorderWidth)
-    })
-  }
-
   // public
   const receptorPosition = {
     x: columnPosition + columnWidth / 2,
@@ -100,10 +67,10 @@ export function NotefieldColumn (color, columnPosition, scrollSpeed) {
   function draw (songTime) {
     canvas.batch(() => {
       canvas.translate(columnPosition, 0)
-      drawBacklight()
-      drawReceptor()
-      notes.forEach(note => drawNote(note, songTime))
-      drawKey()
+      drawBacklight(color, brightness)
+      drawReceptor(color, brightness)
+      notes.forEach(note => drawNote(note, color, songTime, scrollSpeed))
+      drawKey(color, brightness)
     })
   }
 
@@ -117,4 +84,37 @@ export function NotefieldColumn (color, columnPosition, scrollSpeed) {
     press,
     lift
   }
+}
+
+function drawReceptor (color, brightness) {
+  const opacity = lerp(0.3, 0.6, brightness)
+  canvas.setFillColor(color.opacity(opacity))
+  canvas.fillRect(0, canvas.height - keyHeight, columnWidth, -receptorHeight)
+}
+
+function drawBacklight (color, brightness) {
+  const opacity = lerp(0.03, 0.15, brightness)
+  canvas.setFillColor(color.opacity(opacity))
+  canvas.fillRect(0, 0, columnWidth, canvas.height)
+}
+
+function drawKey (color, brightness) {
+  const dim = lerp(0.3, 0, brightness)
+
+  canvas.batch(() => {
+    canvas.translate(0, canvas.height)
+
+    canvas.setFillColor(color.darken(dim))
+    canvas.fillRect(0, 0, columnWidth, -keyHeight)
+
+    canvas.setStroke(color.darken(dim + 0.2), keyBorderWidth)
+    canvas.translate(keyBorderWidth / 2, -keyBorderWidth / 2)
+    canvas.strokeRect(0, 0, columnWidth - keyBorderWidth, -keyHeight + keyBorderWidth)
+  })
+}
+
+function drawNote ({ time, column }, color, songTime, scrollSpeed) {
+  const y = canvas.height - keyHeight - (time - songTime) * noteSpacing * scrollSpeed
+  canvas.setFillColor(color)
+  canvas.fillRect(0, y, columnWidth, -noteHeight)
 }
