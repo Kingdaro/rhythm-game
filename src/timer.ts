@@ -1,9 +1,9 @@
-// return the date in seconds
+// return the current time in seconds
 function now () {
   return Date.now() / 1000
 }
 
-class Timer {
+export class Timer {
   time = now()
 
   step (): number {
@@ -12,5 +12,3 @@ class Timer {
     return elapsed
   }
 }
-
-export default Timer

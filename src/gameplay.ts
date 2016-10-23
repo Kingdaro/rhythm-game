@@ -1,9 +1,8 @@
-// import Background from './background'
-import Notefield from './notefield'
+import {Notefield} from './notefield'
 // import {White} from './color'
 // import * as canvas from './canvas'
 
-class Gameplay {
+export class Gameplay {
   field = new Notefield({}, {})
 
   update (elapsed: number) {
@@ -14,5 +13,3 @@ class Gameplay {
     this.field.draw()
   }
 }
-
-export default Gameplay

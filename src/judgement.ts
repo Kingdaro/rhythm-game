@@ -24,7 +24,7 @@ const JudgementText = {
   [Judgement.Break]: 'BREAK',
 }
 
-export default class JudgementAnimation {
+export class JudgementAnimation {
   animation = 0
   judgement = Judgement.Absolute
 

@@ -9,11 +9,3 @@ export const randomItem = list => list[floor(random() * list.length)]
 export const tail = list => list[list.length - 1]
 
 export const degrees = deg => deg / 180 * PI
-
-export function range (start, end) {
-  const result = []
-  for (let i = start; i <= end; i++) {
-    result.push(i)
-  }
-  return result
-}

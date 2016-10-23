@@ -1,5 +1,5 @@
 import {degrees} from './util'
-import Color from './color'
+import {Color} from './color'
 
 const { cos, sin, PI } = Math
 const TAU = PI * 2

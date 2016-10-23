@@ -1,10 +1,10 @@
-import Background from './background'
-import Timer from './timer'
-import Gameplay from './gameplay'
+import {Background} from './background'
+import {Timer} from './timer'
+import {Gameplay} from './gameplay'
 import {clear} from './canvas'
 import {White} from './color'
 
-export default class Game {
+export class Game {
   bg = new Background()
   timer = new Timer()
   gameplay = new Gameplay()

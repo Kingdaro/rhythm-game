@@ -1,4 +1,4 @@
-export default class Clock {
+export class Clock {
   time: number = 0
 
   constructor (private limit: number) {}

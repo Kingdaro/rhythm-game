@@ -1,7 +1,7 @@
 import * as canvas from './canvas'
-import NoteExplosion from './note-explosion'
-import JudgementAnimation from './judgement'
-// import Clock from './clock'
+import {NoteExplosion} from './note-explosion'
+import {JudgementAnimation} from './judgement'
+// import {Clock} from './clock'
 // import {White, Black, Gold, Cloudy, Violet} from './color'
 import {White, Black} from './color'
 
@@ -21,14 +21,14 @@ interface Song {}
 
 interface NotefieldConfig {}
 
-class Notefield {
+export class Notefield {
   explosion = new NoteExplosion()
   judgement = new JudgementAnimation()
   // columns = []
 
   constructor (private song: Song, private config: NotefieldConfig) {}
 
-  // update (elapsed: number) {}
+  update (elapsed: number) {}
 
   draw () {
     const fieldWidth = columnCount * columnWidth
@@ -60,5 +60,3 @@ class Notefield {
     })
   }
 }
-
-export default Notefield

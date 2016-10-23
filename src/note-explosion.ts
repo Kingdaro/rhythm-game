@@ -40,7 +40,7 @@ class Particle {
   }
 }
 
-class NoteExplosion {
+export class NoteExplosion {
   particles = []
 
   createParticle (ox: number, oy: number) {
@@ -62,5 +62,3 @@ class NoteExplosion {
     this.particles.forEach(part => part.draw())
   }
 }
-
-export default NoteExplosion

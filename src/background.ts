@@ -1,6 +1,6 @@
 import * as canvas from './canvas'
 import {Red, Orange, Gold, Green, Blue, Violet} from './color'
-import Clock from './clock'
+import {Clock} from './clock'
 import {lerp, randomItem} from './util'
 
 const colors = [ Red, Orange, Gold, Green, Blue, Violet ]
@@ -21,7 +21,7 @@ class Shape {
   }
 }
 
-class Background {
+export class Background {
   shapes: Shape[] = []
   clock = new Clock(0.15)
 
@@ -41,5 +41,3 @@ class Background {
     this.shapes.forEach(shape => shape.draw())
   }
 }
-
-export default Background
