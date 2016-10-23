@@ -43,7 +43,7 @@ export class JudgementAnimation {
     const position = this.getPosition()
     const opacity = this.getOpacity()
 
-    canvas.batch(() => {
+    canvas.layer(() => {
       canvas.setFillColor(color.opacity(opacity))
       canvas.setFont('40pt Unica One')
       canvas.setTextAlign('center')

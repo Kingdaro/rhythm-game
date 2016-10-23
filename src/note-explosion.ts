@@ -26,7 +26,7 @@ class Particle {
   }
 
   draw () {
-    canvas.batch(() => {
+    canvas.layer(() => {
       canvas.translate(this.ox + this.x, this.oy + this.y)
       canvas.rotate(-90)
       canvas.setShadow(0, 0, 8, White.opacity(this.life))

@@ -17,7 +17,7 @@ const BorderColor = White.opacity(0.8)
 class Note {
   constructor (public time: number, public color: Color) {}
   draw (songTime) {
-    canvas.batch(() => {
+    canvas.layer(() => {
       canvas.setFillColor(this.color)
       canvas.fillRect(0, (-this.time + songTime) * NoteSpacing, ColumnWidth, -NoteHeight)
     })
@@ -35,25 +35,25 @@ class Column {
 
   draw (songTime: number) {
     // backlight
-    canvas.batch(() => {
+    canvas.layer(() => {
       canvas.setFillColor(this.color.opacity(0.05))
       canvas.fillRect(0, 0, ColumnWidth, canvas.height)
     })
 
     // receptor
-    canvas.batch(() => {
+    canvas.layer(() => {
       canvas.setFillColor(this.color.opacity(0.3))
       canvas.fillRect(0, canvas.height - KeyHeight, ColumnWidth, -NoteHeight)
     })
 
     // notes
-    canvas.batch(() => {
+    canvas.layer(() => {
       canvas.translate(0, canvas.height - KeyHeight)
       this.notes.forEach(note => note.draw(songTime))
     })
 
     // key
-    canvas.batch(() => {
+    canvas.layer(() => {
       canvas.setFillColor(this.color)
       canvas.fillRect(0, canvas.height, ColumnWidth, -KeyHeight)
     })
@@ -88,18 +88,18 @@ export class Notefield {
   draw () {
     const fieldWidth = this.columns.length * ColumnWidth
 
-    canvas.batch(() => {
+    canvas.layer(() => {
       // start at notefield position
       canvas.translate(NotefieldPosition, 0)
 
       // background shade
-      canvas.batch(() => {
+      canvas.layer(() => {
         canvas.setFillColor(BackgroundColor)
         canvas.fillRect(0, 0, fieldWidth, canvas.height)
       })
 
       // notefield edges
-      canvas.batch(() => {
+      canvas.layer(() => {
         canvas.setFillColor(BorderColor)
         canvas.translate(-BorderWidth, 0)
         canvas.fillRect(0, 0, BorderWidth, canvas.height)
@@ -108,7 +108,7 @@ export class Notefield {
       })
 
       // columns
-      canvas.batch(() => {
+      canvas.layer(() => {
         this.columns.forEach(column => {
           column.draw(this.songTime)
           canvas.translate(ColumnWidth, 0)

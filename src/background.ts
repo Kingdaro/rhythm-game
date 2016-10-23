@@ -12,7 +12,7 @@ class Shape {
   color = randomItem(colors)
 
   draw () {
-    canvas.batch(() => {
+    canvas.layer(() => {
       canvas.translate(this.x, this.y)
       canvas.rotate(-90)
       canvas.setFillColor(this.color)

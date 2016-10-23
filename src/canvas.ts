@@ -74,7 +74,7 @@ export function setTextAlign (align: string) {
 }
 
 // transformation
-export function batch (drawops: Function, ...args) {
+export function layer (drawops: Function, ...args) {
   ctx.save()
   drawops(...args)
   ctx.restore()
