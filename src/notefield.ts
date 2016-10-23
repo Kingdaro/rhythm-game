@@ -7,7 +7,7 @@ import {White, Black, Gold, Cloudy, Violet} from './color'
 // import { NotefieldColumn, columnWidth } from './notefield-column'
 
 const columnCount = 6
-const columnWidth = 50
+const columnWidth = 48
 const notefieldPosition = 220
 const borderWidth = 4
 
