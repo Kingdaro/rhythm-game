@@ -1,9 +1,9 @@
-import { degrees } from './util'
+import {degrees} from './util'
 
 const { cos, sin, PI } = Math
 const TAU = PI * 2
 
-export const element = document.querySelector('#game')
+export const element = <HTMLCanvasElement> document.querySelector('#game')
 export const ctx = element.getContext('2d')
 
 export const width = element.width

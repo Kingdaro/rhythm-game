@@ -1,14 +1,11 @@
-import buble from 'rollup-plugin-buble'
+import typescript from 'rollup-plugin-typescript'
 
 export default {
-  entry: 'src/main.js',
+  entry: 'src/main.ts',
   dest: 'bundle.js',
   plugins: [
-    buble({
-      transforms: {
-        dangerousForOf: true
-      },
-      objectAssign: 'Object.assign'
+    typescript({
+      typescript: require('typescript')
     })
   ],
   format: 'iife',

@@ -1,6 +1,6 @@
 import * as canvas from './canvas'
-import { tail, lerp } from './util'
-import { JudgeLevels, getJudgement, isMissed } from './judgement'
+import {tail, lerp} from './util'
+import {JudgeLevels, getJudgement, isMissed} from './judgement'
 
 export const columnWidth = 50
 
@@ -16,7 +16,7 @@ export function NotefieldColumn (color, columnPosition, scrollSpeed) {
   // private
   let pressed = false
   let brightness = 0
-  let notes = []
+  const notes = []
 
   // public
   const receptorPosition = {
@@ -24,36 +24,37 @@ export function NotefieldColumn (color, columnPosition, scrollSpeed) {
     y: canvas.height - keyHeight
   }
 
-  function addNote (time, column) {
-    notes.push({ time, column })
+  function addNote ({ time, column, length }) {
+    notes.push({
+      time, column, length,
+      judgement: null, held: false
+    })
   }
 
-  function checkTap (songTime) {
-    const currentNote = tail(notes)
-    if (currentNote) {
-      const timing = songTime - currentNote.time
-      const level = getJudgement(timing)
-      if (level !== JudgeLevels.break) {
-        notes.pop()
+  function press (songTime) {
+    for (const note of notes) {
+      const judge = getJudgement(songTime - note.time)
+      if (judge !== JudgeLevels.break) {
+        note.judgement = judge
+        note.held = note.length > 0
+        break
       }
-      return level
     }
-  }
-
-  function checkMiss (songTime) {
-    const currentNote = tail(notes)
-    if (currentNote && isMissed(songTime - currentNote.time)) {
-      notes.pop()
-      return true
-    }
-  }
-
-  function press () {
     pressed = true
   }
 
-  function lift () {
+  function lift (songTime) {
+    for (const note of notes) {
+      if (note.held && songTime < note.time + note.length - JudgeLevels.good.window) {
+        note.judgement = JudgeLevels.break
+        break
+      }
+    }
     pressed = false
+  }
+
+  function update (elapsed) {
+    updateBrightness(elapsed)
   }
 
   function updateBrightness (elapsed) {
@@ -77,9 +78,7 @@ export function NotefieldColumn (color, columnPosition, scrollSpeed) {
   return {
     addNote,
     receptorPosition,
-    checkTap,
-    checkMiss,
-    updateBrightness,
+    update,
     draw,
     press,
     lift
@@ -113,8 +112,18 @@ function drawKey (color, brightness) {
   })
 }
 
-function drawNote ({ time, column }, color, songTime, scrollSpeed) {
+function drawNote ({ time, column, length, judgement }, color, songTime, scrollSpeed) {
   const y = canvas.height - keyHeight - (time - songTime) * noteSpacing * scrollSpeed
+
+  if (judgement === JudgeLevels.break) {
+    color = color.darken(0.3)
+  }
+
+  if (length > 0) {
+    canvas.setFillColor(color.opacity(0.5))
+    canvas.fillRect(0, y - noteHeight / 2, columnWidth, -length * noteSpacing * scrollSpeed)
+  }
+
   canvas.setFillColor(color)
   canvas.fillRect(0, y, columnWidth, -noteHeight)
 }
