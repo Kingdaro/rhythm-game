@@ -23,20 +23,18 @@ class Background {
   clock = new Clock(0.15)
 
   update (elapsed: number) {
-    if (elapsed > 1) return
+    if (elapsed > 1) { return }
+
     if (this.clock.update(elapsed)) {
       this.shapes.push(new Shape())
     }
-    for (const shape of this.shapes) {
-      shape.y -= shape.size * 40 * elapsed
-    }
+
+    this.shapes.forEach(shape => shape.y -= shape.size * 40 * elapsed)
     this.shapes = this.shapes.filter(shape => shape.y > -100)
   }
 
   draw () {
-    for (const shape of this.shapes) {
-      shape.draw()
-    }
+    this.shapes.forEach(shape => shape.draw())
   }
 }
 

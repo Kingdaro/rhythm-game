@@ -3,7 +3,7 @@ import {degrees} from './util'
 const { cos, sin, PI } = Math
 const TAU = PI * 2
 
-export const element = <HTMLCanvasElement> document.querySelector('#game')
+export const element = document.querySelector('#game') as HTMLCanvasElement
 export const ctx = element.getContext('2d')
 
 export const width = element.width

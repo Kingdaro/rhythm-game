@@ -1,16 +1,7 @@
-import Background from './background'
+// import Background from './background'
 import Notefield from './notefield'
-import {White} from './color'
-import * as canvas from './canvas'
-
-const bindings = [
-  'KeyA',
-  'KeyS',
-  'KeyD',
-  'KeyK',
-  'KeyL',
-  'Semicolon'
-]
+// import {White} from './color'
+// import * as canvas from './canvas'
 
 class Gameplay {
   field = new Notefield({}, {})

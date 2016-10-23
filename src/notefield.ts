@@ -1,7 +1,7 @@
 import * as canvas from './canvas'
 import NoteExplosion from './note-explosion'
 import JudgementAnimation from './judgement'
-import Clock from './clock'
+// import Clock from './clock'
 import {White, Black, Gold, Cloudy, Violet} from './color'
 
 // import { NotefieldColumn, columnWidth } from './notefield-column'

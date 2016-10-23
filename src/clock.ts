@@ -1,5 +1,5 @@
 export default class Clock {
-  private time: number = 0
+  time: number = 0
 
   constructor (private limit: number) {}
 

@@ -1,6 +1,8 @@
 import Background from './background'
 import Timer from './timer'
 import Gameplay from './gameplay'
+import {clear} from './canvas'
+import {White} from './color'
 
 export default class Game {
   bg = new Background()
@@ -14,6 +16,7 @@ export default class Game {
   }
 
   draw () {
+    clear(White)
     this.bg.draw()
     this.gameplay.draw()
   }
