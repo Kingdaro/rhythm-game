@@ -4,20 +4,36 @@ import {JudgementAnimation} from './judgement'
 import {Color, White, Black, Gold, Cloudy, Violet} from './color'
 // import {Clock} from './clock'
 
-const ColumnWidth = 48
 const NotefieldPosition = 220
+const ColumnWidth = 48
 const BorderWidth = 4
+const KeyHeight = 96
 const NoteHeight = 24
 const NoteSpacing = 100
-const KeyHeight = 96
 
 const BackgroundColor = Black.opacity(0.9)
 const BorderColor = White.opacity(0.8)
 
+class Note {
+  constructor (public time: number, public color: Color) {}
+  draw (songTime) {
+    canvas.batch(() => {
+      canvas.setFillColor(this.color)
+      canvas.fillRect(0, (-this.time + songTime) * NoteSpacing, ColumnWidth, -NoteHeight)
+    })
+  }
+}
+
 class Column {
+  notes: Note[] = []
+
   constructor (public color: Color) {}
 
-  draw () {
+  addNote (time: number) {
+    this.notes.push(new Note(time, this.color))
+  }
+
+  draw (songTime: number) {
     // backlight
     canvas.batch(() => {
       canvas.setFillColor(this.color.opacity(0.05))
@@ -28,6 +44,12 @@ class Column {
     canvas.batch(() => {
       canvas.setFillColor(this.color.opacity(0.3))
       canvas.fillRect(0, canvas.height - KeyHeight, ColumnWidth, -NoteHeight)
+    })
+
+    // notes
+    canvas.batch(() => {
+      canvas.translate(0, canvas.height - KeyHeight)
+      this.notes.forEach(note => note.draw(songTime))
     })
 
     // key
@@ -46,6 +68,13 @@ export class Notefield {
 
   constructor () {
     this.setColumns([Gold, Cloudy, Violet, Cloudy, Violet, Cloudy])
+
+    this.columns[0].addNote(0)
+    this.columns[1].addNote(1)
+    this.columns[2].addNote(2)
+    this.columns[3].addNote(3)
+    this.columns[4].addNote(4)
+    this.columns[5].addNote(5)
   }
 
   setColumns (colors: Color[]) {
@@ -81,7 +110,7 @@ export class Notefield {
       // columns
       canvas.batch(() => {
         this.columns.forEach(column => {
-          column.draw()
+          column.draw(this.songTime)
           canvas.translate(ColumnWidth, 0)
         })
       })
