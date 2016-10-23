@@ -3,7 +3,7 @@ import {Notefield} from './notefield'
 // import * as canvas from './canvas'
 
 export class Gameplay {
-  field = new Notefield({}, {})
+  field = new Notefield()
 
   update (elapsed: number) {
     this.field.update(elapsed)
