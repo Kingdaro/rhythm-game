@@ -25,10 +25,15 @@ class Note {
   constructor (public time: number, public length: number, public color: Color) {}
 
   draw (songTime: number) {
-    const pos = this.getTrackPosition(this.time, songTime)
+    const receptorPosition = canvas.height - KeyHeight
+    const scrollDirection = -1
+    const trackPosition = (this.time - songTime) * NoteSpacing
+
+    const position = receptorPosition + (trackPosition * scrollDirection)
     const color = this.getColor()
-    canvas.fillRect(0, -pos, ColumnWidth, -NoteSpacing * this.length, color.opacity(0.7))
-    canvas.fillRect(0, -pos, ColumnWidth, -NoteHeight, color)
+
+    canvas.fillRect(0, position, ColumnWidth, NoteSpacing * this.length * scrollDirection, color.opacity(0.7))
+    canvas.fillRect(0, position, ColumnWidth, NoteHeight * scrollDirection, color)
   }
 
   getColor (): Color {
@@ -143,10 +148,7 @@ class Column {
     })
 
     // notes
-    canvas.layer(() => {
-      canvas.translate(0, canvas.height - KeyHeight)
-      this.notes.forEach(note => note.draw(songTime))
-    })
+    this.notes.forEach(note => note.draw(songTime))
 
     // key
     canvas.layer(() => {
@@ -193,19 +195,6 @@ export class Notefield {
       col.updateInputState()
       col.updateBrightness(dt)
       col.updateNotes(this.song.time)
-
-      // const score = col.checkTap(this.song.time)
-      // if (score !== Judgement.None) {
-      //   this.judgement.play(score)
-      //   this.combo.add(1)
-      // }
-      // if (col.checkMiss(this.song.time)) {
-      //   this.judgement.play(Judgement.Break)
-      //   this.combo.reset()
-      // }
-      // if (col.checkHold(this.song.time)) {
-      //   // stuff
-      // }
     })
   }
 
