@@ -77,8 +77,10 @@ export class ComboAnimation {
   ghostTime = 1
 
   add (combo: number) {
-    this.combo += combo
-    this.ghostTime = 0
+    if (combo > 0) {
+      this.combo += combo
+      this.ghostTime = 0
+    }
   }
 
   reset () {
