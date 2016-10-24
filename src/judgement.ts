@@ -4,12 +4,12 @@ import {Blue, Orange, Green, Red, Cloudy} from './color'
 
 const {ceil} = Math
 
-export const enum Judgement { Absolute, Perfect, Good, Break, None }
+export const enum Judgement { None, Break, Good, Perfect, Absolute }
 
 export const TimingWindow = {
-  [Judgement.Absolute]: 15 / 1000,
-  [Judgement.Perfect]: 70 / 1000,
-  [Judgement.Good]: 130 / 1000,
+  Absolute: 15 / 1000,
+  Perfect: 70 / 1000,
+  Good: 130 / 1000,
 }
 
 const JudgementColor = {
@@ -109,14 +109,6 @@ export class ComboAnimation {
       canvas.fillText(this.combo.toString(), 0, 0)
     })
   }
-}
-
-export function getJudgement (timing: number) {
-  const diff = Math.abs(timing)
-  if (diff <= TimingWindow[Judgement.Absolute]) return Judgement.Absolute
-  if (diff <= TimingWindow[Judgement.Perfect]) return Judgement.Perfect
-  if (diff <= TimingWindow[Judgement.Good]) return Judgement.Good
-  return Judgement.None
 }
 
 export function isMissed (timing: number) {

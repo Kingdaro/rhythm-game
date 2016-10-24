@@ -2,7 +2,7 @@ import * as canvas from './canvas'
 import * as input from './input'
 import {Song} from './song'
 import {NoteExplosion} from './note-explosion'
-import {Judgement, JudgementAnimation, ComboAnimation, getJudgement, isMissed} from './judgement'
+import {Judgement, JudgementAnimation, ComboAnimation, TimingWindow, isMissed} from './judgement'
 import {Color, White, Black, Gold, Cloudy, Violet} from './color'
 import {lerp} from './util'
 // import {Clock} from './clock'
@@ -17,22 +17,52 @@ const NoteSpacing = 100
 const BackgroundColor = Black.opacity(0.9)
 const BorderColor = White.opacity(0.8)
 
-enum NoteState { Active, Inactive }
+enum NoteState { Active, Holding, Hit, Missed }
 
 class Note {
   state = NoteState.Active
 
-  constructor (public time: number, public color: Color) {}
+  constructor (public time: number, public length: number, public color: Color) {}
 
-  getTiming (songTime: number) {
+  draw (songTime: number) {
+    const pos = this.getTrackPosition(this.time, songTime)
+    const color = this.getColor()
+    canvas.fillRect(0, -pos, ColumnWidth, -NoteSpacing * this.length, color.opacity(0.7))
+    canvas.fillRect(0, -pos, ColumnWidth, -NoteHeight, color)
+  }
+
+  getColor (): Color {
+    const colors = {
+      [NoteState.Active]: this.color,
+      [NoteState.Hit]: new Color(0, 0, 0, 0),
+      [NoteState.Missed]: this.color.opacity(0.7),
+      [NoteState.Holding]: this.color,
+    }
+    return colors[this.state]
+  }
+
+  getJudgement (songTime: number): Judgement {
+    const diff = Math.abs(this.getTiming(songTime))
+    if (diff <= TimingWindow.Absolute) return Judgement.Absolute
+    if (diff <= TimingWindow.Perfect) return Judgement.Perfect
+    if (diff <= TimingWindow.Good) return Judgement.Good
+    return Judgement.None
+  }
+
+  getTiming (songTime: number): number {
     return songTime - this.time
   }
 
-  draw (songTime: number) {
-    if (this.state === NoteState.Inactive) return
-    canvas.layer(() => {
-      canvas.fillRect(0, (-this.time + songTime) * NoteSpacing, ColumnWidth, -NoteHeight, this.color)
-    })
+  getTrackPosition (time: number, songTime: number): number {
+    return (time - songTime) * NoteSpacing
+  }
+
+  isHeadPassed (songTime: number): boolean {
+    return songTime > this.time + TimingWindow.Good
+  }
+
+  isPassed (songTime: number): boolean {
+    return songTime > this.time + this.length + TimingWindow.Good
   }
 }
 
@@ -40,52 +70,58 @@ class Column {
   notes: Note[] = []
   pressed = false
   released = false
-  held = false
+  holding = false
   brightness = 0
+  currentNote = 0
 
   constructor (public color: Color, public key: string) {}
 
-  addNote (time: number) {
-    this.notes.push(new Note(time, this.color))
+  addNote (time: number, length: number) {
+    this.notes.push(new Note(time, length, this.color))
     this.notes.sort((a, b) => a.time - b.time)
   }
 
   updateInputState () {
-    const held = input.isDown(this.key)
-    this.pressed = held && !this.held
-    this.released = !held && this.held
-    this.held = held
+    const holding = input.isDown(this.key)
+    this.pressed = holding && !this.holding
+    this.released = !holding && this.holding
+    this.holding = holding
   }
 
-  checkTap (songTime: number): Judgement {
-    if (this.pressed) {
-      for (const note of this.notes) {
-        if (note.state === NoteState.Active) {
-          const timing = note.getTiming(songTime)
-          const judge = getJudgement(timing)
-          if (judge !== Judgement.None) {
-            note.state = NoteState.Inactive
+  updateNotes (songTime: number) {
+    const note = this.notes.find(note => note.state < NoteState.Hit)
+    if (note) {
+      if (note.state === NoteState.Active) {
+        if (this.pressed) {
+          const judgement = note.getJudgement(songTime)
+          if (judgement !== Judgement.None) {
+            if (note.length === 0) {
+              note.state = NoteState.Hit
+            } else {
+              note.state = NoteState.Holding
+            }
           }
-          return judge
+        } else if (songTime > note.time + TimingWindow.Good) {
+          note.state = NoteState.Missed
+        }
+      } else if (note.state === NoteState.Holding) {
+        if (this.released) {
+          if (songTime > note.time + note.length - TimingWindow.Good) {
+            note.state = NoteState.Hit
+          } else {
+            note.state = NoteState.Missed
+          }
+        } else if (this.holding) {
+          if (songTime > note.time + note.length) {
+            note.state = NoteState.Hit
+          }
         }
       }
     }
-    return Judgement.None
-  }
-
-  checkMiss (songTime: number): boolean {
-    let missed = false
-    for (const note of this.notes) {
-      if (note.state === NoteState.Active && isMissed(note.getTiming(songTime))) {
-        note.state = NoteState.Inactive
-        missed = true
-      }
-    }
-    return missed
   }
 
   updateBrightness (dt: number) {
-    if (this.held) {
+    if (this.holding) {
       this.brightness = 1
     } else {
       this.brightness = lerp(this.brightness, 0, dt * 18)
@@ -131,18 +167,18 @@ export class Notefield {
       [Gold, Cloudy, Violet, Cloudy, Violet, Cloudy],
       ['KeyA', 'KeyS', 'KeyD', 'KeyK', 'KeyL', 'Semicolon'])
 
-    this.columns[0].addNote(0)
-    this.columns[1].addNote(1)
-    this.columns[2].addNote(2)
-    this.columns[3].addNote(3)
-    this.columns[4].addNote(4)
-    this.columns[5].addNote(5)
-    this.columns[0].addNote(6)
-    this.columns[1].addNote(7)
-    this.columns[2].addNote(8)
-    this.columns[3].addNote(9)
-    this.columns[4].addNote(10)
-    this.columns[5].addNote(11)
+    this.columns[0].addNote(0, 1)
+    this.columns[1].addNote(1, 1)
+    this.columns[2].addNote(2, 1)
+    this.columns[3].addNote(3, 1)
+    this.columns[4].addNote(4, 1)
+    this.columns[5].addNote(5, 1)
+    this.columns[0].addNote(6, 0)
+    this.columns[1].addNote(7, 0)
+    this.columns[2].addNote(8, 0)
+    this.columns[3].addNote(9, 0)
+    this.columns[4].addNote(10, 0)
+    this.columns[5].addNote(11, 0)
   }
 
   setColumns (colors: Color[], keys: string[]) {
@@ -156,16 +192,20 @@ export class Notefield {
     this.columns.forEach(col => {
       col.updateInputState()
       col.updateBrightness(dt)
+      col.updateNotes(this.song.time)
 
-      const score = col.checkTap(this.song.time)
-      if (score !== Judgement.None) {
-        this.judgement.play(score)
-        this.combo.add(1)
-      }
-      if (col.checkMiss(this.song.time)) {
-        this.judgement.play(Judgement.Break)
-        this.combo.reset()
-      }
+      // const score = col.checkTap(this.song.time)
+      // if (score !== Judgement.None) {
+      //   this.judgement.play(score)
+      //   this.combo.add(1)
+      // }
+      // if (col.checkMiss(this.song.time)) {
+      //   this.judgement.play(Judgement.Break)
+      //   this.combo.reset()
+      // }
+      // if (col.checkHold(this.song.time)) {
+      //   // stuff
+      // }
     })
   }
 
