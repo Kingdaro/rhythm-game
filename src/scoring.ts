@@ -110,7 +110,3 @@ export class ComboAnimation {
     })
   }
 }
-
-export function isMissed (timing: number) {
-  return timing > TimingWindow[Judgement.Good]
-}
