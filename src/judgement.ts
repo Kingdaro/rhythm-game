@@ -25,16 +25,16 @@ const JudgementText = {
 }
 
 export class JudgementAnimation {
-  animation = 0
+  time = 0
   judgement = Judgement.None
 
   play (score: Judgement) {
-    this.animation = 1
+    this.time = 1
     this.judgement = score
   }
 
   update (elapsed: number) {
-    this.animation = clamp(this.animation - (elapsed / 0.8), 0, 1)
+    this.time = clamp(this.time - (elapsed / 0.8), 0, 1)
   }
 
   draw (x: number, y: number) {
@@ -55,17 +55,17 @@ export class JudgementAnimation {
 
   getPosition () {
     if (this.judgement !== Judgement.Break) {
-      return (this.animation ** 8) * 20
+      return (this.time ** 8) * 20
     } else {
-      return (1 - this.animation) * 20
+      return (1 - this.time) * 20
     }
   }
 
   getOpacity () {
     if (this.judgement !== Judgement.Break) {
-      return clamp(this.animation * 5, 0, 1)
+      return clamp(this.time * 5, 0, 1)
     } else {
-      return clamp(this.animation * 2, 0, 1)
+      return clamp(this.time * 2, 0, 1)
     }
   }
 }
