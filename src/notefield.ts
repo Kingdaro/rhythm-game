@@ -57,6 +57,7 @@ class Column {
   }
 
   checkTap (songTime: number) {
+    if (!this.pressed) return
     for (const note of this.notes) {
       if (note.state === NoteState.Active) {
         const timing = note.getTiming(songTime)
@@ -140,13 +141,11 @@ export class Notefield {
 
     this.columns.forEach(col => {
       col.updateInputState()
-      if (col.pressed) {
-        const score = col.checkTap(this.songTime)
-        if (score != null) {
-          this.judgement.play(score)
-        }
-      }
       col.updateBrightness(elapsed)
+      const score = col.checkTap(this.songTime)
+      if (score != null) {
+        this.judgement.play(score)
+      }
     })
   }
 
