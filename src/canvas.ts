@@ -26,6 +26,15 @@ export function circle (x: number, y: number, radius: number, sides: number = 0)
   ctx.fill()
 }
 
+export function fillTriangle (x: number, y: number, radius: number, color?: Color) {
+  layer(() => {
+    if (color) setFillColor(color)
+    translate(x, y)
+    rotate(-90)
+    circle(0, 0, radius, 3)
+  })
+}
+
 export function fillRect (x: number, y: number, width: number, height: number, color?: Color) {
   layer(() => {
     if (color) setFillColor(color)
