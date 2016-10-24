@@ -3,7 +3,7 @@ import * as input from './input'
 import {Song} from './song'
 import {NoteExplosion} from './note-explosion'
 import {Judgement, JudgementAnimation, ComboAnimation, TimingWindow, isMissed} from './judgement'
-import {Color, White, Black, Gold, Cloudy, Violet} from './color'
+import {Color, White, Black, Gold, Cloudy, Violet, Transparent} from './color'
 import {lerp} from './util'
 // import {Clock} from './clock'
 
@@ -25,23 +25,36 @@ class Note {
   constructor (public time: number, public length: number, public color: Color) {}
 
   draw (songTime: number) {
+    if (this.state === NoteState.Hit) return
+
     const receptorPosition = canvas.height - KeyHeight
     const scrollDirection = -1
-    const trackPosition = (this.time - songTime) * NoteSpacing
 
-    const position = receptorPosition + (trackPosition * scrollDirection)
-    const color = this.getColor()
+    const headPosition = (this.time - songTime) * NoteSpacing
+    const tailPosition = (this.time + this.length - songTime) * NoteSpacing
 
-    canvas.fillRect(0, position, ColumnWidth, NoteSpacing * this.length * scrollDirection, color.opacity(0.7))
-    canvas.fillRect(0, position, ColumnWidth, NoteHeight * scrollDirection, color)
+    const position = receptorPosition + headPosition * scrollDirection
+    const holdLength = (tailPosition - headPosition) * scrollDirection
+
+    canvas.fillRect(0, position, ColumnWidth, holdLength, this.getTailColor())
+    canvas.fillRect(0, position, ColumnWidth, NoteHeight * scrollDirection,
+      this.getHeadColor())
   }
 
-  getColor (): Color {
+  getHeadColor (): Color {
     const colors = {
       [NoteState.Active]: this.color,
-      [NoteState.Hit]: new Color(0, 0, 0, 0),
-      [NoteState.Missed]: this.color.opacity(0.7),
       [NoteState.Holding]: this.color,
+      [NoteState.Missed]: this.color.opacity(0.7),
+    }
+    return colors[this.state]
+  }
+
+  getTailColor (): Color {
+    const colors = {
+      [NoteState.Active]: this.color.opacity(0.65),
+      [NoteState.Holding]: this.color.opacity(0.8),
+      [NoteState.Missed]: this.color.opacity(0.4),
     }
     return colors[this.state]
   }
