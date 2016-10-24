@@ -2,7 +2,7 @@ import * as canvas from './canvas'
 import * as input from './input'
 import {Song} from './song'
 import {NoteExplosion} from './note-explosion'
-import {Judgement, JudgementAnimation, getJudgement, isMissed} from './judgement'
+import {Judgement, JudgementAnimation, ComboAnimation, getJudgement, isMissed} from './judgement'
 import {Color, White, Black, Gold, Cloudy, Violet} from './color'
 import {lerp} from './util'
 // import {Clock} from './clock'
@@ -123,6 +123,7 @@ class Column {
 export class Notefield {
   explosion = new NoteExplosion()
   judgement = new JudgementAnimation()
+  combo = new ComboAnimation()
   columns: Column[] = []
 
   constructor (public song: Song) {
@@ -150,6 +151,7 @@ export class Notefield {
 
   update (dt: number) {
     this.judgement.update(dt)
+    this.combo.update(dt)
 
     this.columns.forEach(col => {
       col.updateInputState()
@@ -158,9 +160,11 @@ export class Notefield {
       const score = col.checkTap(this.song.time)
       if (score !== Judgement.None) {
         this.judgement.play(score)
+        this.combo.add(1)
       }
       if (col.checkMiss(this.song.time)) {
         this.judgement.play(Judgement.Break)
+        this.combo.reset()
       }
     })
   }
@@ -194,8 +198,11 @@ export class Notefield {
         })
       })
 
+      // combo
+      this.combo.draw(fieldWidth / 2, canvas.height / 2 - 120)
+
       // judgement
-      this.judgement.draw(fieldWidth / 2, canvas.height / 2)
+      this.judgement.draw(fieldWidth / 2, canvas.height / 2 + 80)
     })
 
     // note explosions

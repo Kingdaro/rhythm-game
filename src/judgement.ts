@@ -1,6 +1,8 @@
 import * as canvas from './canvas'
-import {clamp} from './util'
-import {Blue, Orange, Green, Red} from './color'
+import {clamp, lerp} from './util'
+import {Blue, Orange, Green, Red, Cloudy} from './color'
+
+const {ceil} = Math
 
 export const enum Judgement { Absolute, Perfect, Good, Break, None }
 
@@ -53,7 +55,7 @@ export class JudgementAnimation {
     })
   }
 
-  getPosition () {
+  getPosition (): number {
     if (this.judgement !== Judgement.Break) {
       return (this.time ** 8) * 20
     } else {
@@ -61,12 +63,51 @@ export class JudgementAnimation {
     }
   }
 
-  getOpacity () {
+  getOpacity (): number {
     if (this.judgement !== Judgement.Break) {
       return clamp(this.time * 5, 0, 1)
     } else {
       return clamp(this.time * 2, 0, 1)
     }
+  }
+}
+
+export class ComboAnimation {
+  combo = 0
+  ghostTime = 1
+
+  add (combo: number) {
+    this.combo += combo
+    this.ghostTime = 0
+  }
+
+  reset () {
+    this.combo = 0
+  }
+
+  update (dt: number) {
+    this.ghostTime = lerp(this.ghostTime, 1, dt * 10)
+  }
+
+  draw (x: number, y: number) {
+    if (this.combo < 1) return
+
+    canvas.setFont('64px Unica One')
+    canvas.setTextAlign('center')
+
+    canvas.layer(() => {
+      canvas.setFillColor(Cloudy)
+      canvas.fillText(this.combo.toString(), x, y)
+    })
+
+    canvas.layer(() => {
+      const opacity = lerp(1, 0, this.ghostTime)
+      const scale = lerp(1, 1.8, this.ghostTime)
+      canvas.setFillColor(Cloudy.opacity(opacity))
+      canvas.translate(x, y)
+      canvas.ctx.scale(scale, scale)
+      canvas.fillText(this.combo.toString(), 0, 0)
+    })
   }
 }
 
