@@ -1,5 +1,6 @@
 import * as canvas from './canvas'
 import * as input from './input'
+import {Song} from './song'
 import {NoteExplosion} from './note-explosion'
 import {Judgement, JudgementAnimation, getJudgement, isMissed} from './judgement'
 import {Color, White, Black, Gold, Cloudy, Violet} from './color'
@@ -122,10 +123,9 @@ class Column {
 export class Notefield {
   explosion = new NoteExplosion()
   judgement = new JudgementAnimation()
-  songTime = -3
   columns: Column[] = []
 
-  constructor () {
+  constructor (public song: Song) {
     this.setColumns(
       [Gold, Cloudy, Violet, Cloudy, Violet, Cloudy],
       ['KeyA', 'KeyS', 'KeyD', 'KeyK', 'KeyL', 'Semicolon'])
@@ -149,18 +149,17 @@ export class Notefield {
   }
 
   update (elapsed: number) {
-    this.songTime += elapsed
     this.judgement.update(elapsed)
 
     this.columns.forEach(col => {
       col.updateInputState()
       col.updateBrightness(elapsed)
 
-      const score = col.checkTap(this.songTime)
+      const score = col.checkTap(this.song.time)
       if (score !== Judgement.None) {
         this.judgement.play(score)
       }
-      if (col.checkMiss(this.songTime)) {
+      if (col.checkMiss(this.song.time)) {
         this.judgement.play(Judgement.Break)
       }
     })
@@ -190,7 +189,7 @@ export class Notefield {
       // columns
       canvas.layer(() => {
         this.columns.forEach(column => {
-          column.draw(this.songTime)
+          column.draw(this.song.time)
           canvas.translate(ColumnWidth, 0)
         })
       })
