@@ -37,7 +37,7 @@ export class JudgementAnimation {
     this.animation = clamp(this.animation - (elapsed / 0.8), 0, 1)
   }
 
-  draw () {
+  draw (x: number, y: number) {
     const text = JudgementText[this.judgement]
     const color = JudgementColor[this.judgement]
     const position = this.getPosition()
@@ -47,7 +47,7 @@ export class JudgementAnimation {
       canvas.setFillColor(color.opacity(opacity))
       canvas.setFont('40pt Unica One')
       canvas.setTextAlign('center')
-      canvas.fillText(text, 0, position)
+      canvas.fillText(text, x, y + position)
     })
   }
 
@@ -68,14 +68,14 @@ export class JudgementAnimation {
   }
 }
 
-export function getJudgement (timing) {
+export function getJudgement (timing: number) {
   const diff = Math.abs(timing)
-  if (diff < TimingWindow[Judgement.Absolute]) return Judgement.Absolute
-  if (diff < TimingWindow[Judgement.Perfect]) return Judgement.Perfect
-  if (diff < TimingWindow[Judgement.Good]) return Judgement.Good
+  if (diff <= TimingWindow[Judgement.Absolute]) return Judgement.Absolute
+  if (diff <= TimingWindow[Judgement.Perfect]) return Judgement.Perfect
+  if (diff <= TimingWindow[Judgement.Good]) return Judgement.Good
   return Judgement.Break
 }
 
-export function isMissed (timing) {
+export function isMissed (timing: number) {
   return timing > TimingWindow[Judgement.Good]
 }

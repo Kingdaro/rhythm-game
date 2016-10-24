@@ -1,7 +1,7 @@
 import * as canvas from './canvas'
 import * as input from './input'
 import {NoteExplosion} from './note-explosion'
-import {JudgementAnimation} from './judgement'
+import {Judgement, JudgementAnimation, getJudgement} from './judgement'
 import {Color, White, Black, Gold, Cloudy, Violet} from './color'
 import {lerp} from './util'
 // import {Clock} from './clock'
@@ -16,9 +16,19 @@ const NoteSpacing = 100
 const BackgroundColor = Black.opacity(0.9)
 const BorderColor = White.opacity(0.8)
 
+enum NoteState { Active, Inactive }
+
 class Note {
+  state = NoteState.Active
+
   constructor (public time: number, public color: Color) {}
+
+  getTiming (songTime: number) {
+    return songTime - this.time
+  }
+
   draw (songTime: number) {
+    if (this.state === NoteState.Inactive) return
     canvas.layer(() => {
       canvas.fillRect(0, (-this.time + songTime) * NoteSpacing, ColumnWidth, -NoteHeight, this.color)
     })
@@ -27,16 +37,40 @@ class Note {
 
 class Column {
   notes: Note[] = []
+  pressed = false
+  released = false
+  held = false
   brightness = 0
 
   constructor (public color: Color, public key: string) {}
 
   addNote (time: number) {
     this.notes.push(new Note(time, this.color))
+    this.notes.sort((a, b) => a.time - b.time)
   }
 
-  update (elapsed: number) {
-    if (input.isDown(this.key)) {
+  updateInputState () {
+    const held = input.isDown(this.key)
+    this.pressed = held && !this.held
+    this.released = !held && this.held
+    this.held = held
+  }
+
+  checkTap (songTime: number) {
+    for (const note of this.notes) {
+      if (note.state === NoteState.Active) {
+        const timing = note.getTiming(songTime)
+        const judge = getJudgement(timing)
+        if (judge !== Judgement.Break) {
+          note.state = NoteState.Inactive
+          return judge
+        }
+      }
+    }
+  }
+
+  updateBrightness (elapsed: number) {
+    if (this.held) {
       this.brightness = 1
     } else {
       this.brightness = lerp(this.brightness, 0, elapsed * 18)
@@ -88,6 +122,12 @@ export class Notefield {
     this.columns[3].addNote(3)
     this.columns[4].addNote(4)
     this.columns[5].addNote(5)
+    this.columns[0].addNote(6)
+    this.columns[1].addNote(7)
+    this.columns[2].addNote(8)
+    this.columns[3].addNote(9)
+    this.columns[4].addNote(10)
+    this.columns[5].addNote(11)
   }
 
   setColumns (colors: Color[], keys: string[]) {
@@ -96,7 +136,18 @@ export class Notefield {
 
   update (elapsed: number) {
     this.songTime += elapsed
-    this.columns.forEach(col => col.update(elapsed))
+    this.judgement.update(elapsed)
+
+    this.columns.forEach(col => {
+      col.updateInputState()
+      if (col.pressed) {
+        const score = col.checkTap(this.songTime)
+        if (score != null) {
+          this.judgement.play(score)
+        }
+      }
+      col.updateBrightness(elapsed)
+    })
   }
 
   draw () {
@@ -127,12 +178,12 @@ export class Notefield {
           canvas.translate(ColumnWidth, 0)
         })
       })
+
+      // judgement
+      this.judgement.draw(this.columns.length * ColumnWidth / 2, canvas.height / 2)
     })
 
     // note explosions
     this.explosion.draw()
-
-    // judgement
-    this.judgement.draw()
   }
 }
