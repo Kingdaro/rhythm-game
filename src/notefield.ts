@@ -94,7 +94,7 @@ class Column {
     this.holding = holding
   }
 
-  updateNotes (songTime: number) {
+  updateNotes (songTime: number): Judgement {
     const note = this.notes.find(note => note.state < NoteState.Hit)
     if (note) {
       if (note.state === NoteState.Active) {
@@ -107,8 +107,10 @@ class Column {
               note.state = NoteState.Holding
             }
           }
+          return judgement
         } else if (songTime > note.time + TimingWindow.Good) {
           note.state = NoteState.Missed
+          return Judgement.Break
         }
       } else if (note.state === NoteState.Holding) {
         if (this.released) {
@@ -116,6 +118,7 @@ class Column {
             note.state = NoteState.Hit
           } else {
             note.state = NoteState.Missed
+          return Judgement.Break
           }
         } else if (this.holding) {
           if (songTime > note.time + note.length) {
@@ -124,6 +127,7 @@ class Column {
         }
       }
     }
+    return Judgement.None
   }
 
   updateBrightness (dt: number) {
@@ -195,7 +199,16 @@ export class Notefield {
     this.columns.forEach(col => {
       col.updateInputState()
       col.updateBrightness(dt)
-      col.updateNotes(this.song.time)
+
+      const judgement = col.updateNotes(this.song.time)
+      if (judgement !== Judgement.None) {
+        this.judgement.play(judgement)
+        if (judgement !== Judgement.Break) {
+          this.combo.add(1)
+        } else {
+          this.combo.reset()
+        }
+      }
     })
   }
 
