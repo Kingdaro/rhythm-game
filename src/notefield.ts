@@ -5,7 +5,6 @@ import {NoteExplosion} from './note-explosion'
 import {Judgement, JudgementAnimation, ComboAnimation, TimingWindow} from './scoring'
 import {Color, White, Black, Gold, Cloudy, Violet} from './color'
 import {lerp} from './util'
-// import {Clock} from './clock'
 
 const NotefieldPosition = 220
 const ColumnWidth = 48
@@ -118,7 +117,7 @@ class Column {
             note.state = NoteState.Hit
           } else {
             note.state = NoteState.Missed
-          return Judgement.Break
+            return Judgement.Break
           }
         } else if (this.holding) {
           if (songTime > note.time + note.length) {
@@ -164,10 +163,10 @@ class Column {
 }
 
 export class Notefield {
+  columns: Column[] = []
   explosion = new NoteExplosion()
   judgement = new JudgementAnimation()
   combo = new ComboAnimation()
-  columns: Column[] = []
 
   constructor (public song: Song) {
     this.setColumns(

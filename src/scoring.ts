@@ -74,12 +74,12 @@ export class JudgementAnimation {
 
 export class ComboAnimation {
   combo = 0
-  ghostTime = 1
+  time = 1
 
   add (combo: number) {
     if (combo > 0) {
       this.combo += combo
-      this.ghostTime = 0
+      this.time = 0
     }
   }
 
@@ -88,26 +88,20 @@ export class ComboAnimation {
   }
 
   update (dt: number) {
-    this.ghostTime = lerp(this.ghostTime, 1, dt * 10)
+    this.time = lerp(this.time, 1, dt * 15)
   }
 
   draw (x: number, y: number) {
     if (this.combo < 1) return
 
-    canvas.setFont('64px Unica One')
+    canvas.setFont('72px Unica One')
     canvas.setTextAlign('center')
 
     canvas.layer(() => {
-      canvas.setFillColor(Cloudy)
-      canvas.fillText(this.combo.toString(), x, y)
-    })
-
-    canvas.layer(() => {
-      const opacity = lerp(1, 0, this.ghostTime)
-      const scale = lerp(1, 1.8, this.ghostTime)
-      canvas.setFillColor(Cloudy.opacity(opacity))
+      const scale = lerp(0.8, 1, this.time)
       canvas.translate(x, y)
       canvas.ctx.scale(scale, scale)
+      canvas.setFillColor(Cloudy)
       canvas.fillText(this.combo.toString(), 0, 0)
     })
   }
