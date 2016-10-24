@@ -56,18 +56,20 @@ class Column {
     this.held = held
   }
 
-  checkTap (songTime: number) {
-    if (!this.pressed) return
-    for (const note of this.notes) {
-      if (note.state === NoteState.Active) {
-        const timing = note.getTiming(songTime)
-        const judge = getJudgement(timing)
-        if (judge !== Judgement.Break) {
-          note.state = NoteState.Inactive
+  checkTap (songTime: number): Judgement {
+    if (this.pressed) {
+      for (const note of this.notes) {
+        if (note.state === NoteState.Active) {
+          const timing = note.getTiming(songTime)
+          const judge = getJudgement(timing)
+          if (judge !== Judgement.None) {
+            note.state = NoteState.Inactive
+          }
           return judge
         }
       }
     }
+    return Judgement.None
   }
 
   updateBrightness (elapsed: number) {
@@ -143,7 +145,7 @@ export class Notefield {
       col.updateInputState()
       col.updateBrightness(elapsed)
       const score = col.checkTap(this.songTime)
-      if (score != null) {
+      if (score !== Judgement.None) {
         this.judgement.play(score)
       }
     })

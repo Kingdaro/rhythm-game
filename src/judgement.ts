@@ -2,7 +2,7 @@ import * as canvas from './canvas'
 import {clamp} from './util'
 import {Blue, Orange, Green, Red} from './color'
 
-export const enum Judgement { Absolute, Perfect, Good, Break }
+export const enum Judgement { Absolute, Perfect, Good, Break, None }
 
 export const TimingWindow = {
   [Judgement.Absolute]: 15 / 1000,
@@ -26,7 +26,7 @@ const JudgementText = {
 
 export class JudgementAnimation {
   animation = 0
-  judgement = Judgement.Absolute
+  judgement = Judgement.None
 
   play (score: Judgement) {
     this.animation = 1
@@ -38,6 +38,8 @@ export class JudgementAnimation {
   }
 
   draw (x: number, y: number) {
+    if (this.judgement === Judgement.None) return
+
     const text = JudgementText[this.judgement]
     const color = JudgementColor[this.judgement]
     const position = this.getPosition()
@@ -73,7 +75,7 @@ export function getJudgement (timing: number) {
   if (diff <= TimingWindow[Judgement.Absolute]) return Judgement.Absolute
   if (diff <= TimingWindow[Judgement.Perfect]) return Judgement.Perfect
   if (diff <= TimingWindow[Judgement.Good]) return Judgement.Good
-  return Judgement.Break
+  return Judgement.None
 }
 
 export function isMissed (timing: number) {
