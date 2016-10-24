@@ -196,7 +196,7 @@ export class Notefield {
       })
 
       // judgement
-      this.judgement.draw(this.columns.length * ColumnWidth / 2, canvas.height / 2)
+      this.judgement.draw(fieldWidth / 2, canvas.height / 2)
     })
 
     // note explosions
