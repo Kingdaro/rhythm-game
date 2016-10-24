@@ -3,7 +3,7 @@ import * as input from './input'
 import {Song} from './song'
 import {NoteExplosion} from './note-explosion'
 import {Judgement, JudgementAnimation, ComboAnimation, TimingWindow, isMissed} from './judgement'
-import {Color, White, Black, Gold, Cloudy, Violet, Transparent} from './color'
+import {Color, White, Black, Gold, Cloudy, Violet} from './color'
 import {lerp} from './util'
 // import {Clock} from './clock'
 
@@ -69,18 +69,6 @@ class Note {
 
   getTiming (songTime: number): number {
     return songTime - this.time
-  }
-
-  getTrackPosition (time: number, songTime: number): number {
-    return (time - songTime) * NoteSpacing
-  }
-
-  isHeadPassed (songTime: number): boolean {
-    return songTime > this.time + TimingWindow.Good
-  }
-
-  isPassed (songTime: number): boolean {
-    return songTime > this.time + this.length + TimingWindow.Good
   }
 }
 
