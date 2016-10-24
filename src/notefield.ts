@@ -1,7 +1,7 @@
 import * as canvas from './canvas'
 import * as input from './input'
 import {NoteExplosion} from './note-explosion'
-import {Judgement, JudgementAnimation, getJudgement} from './judgement'
+import {Judgement, JudgementAnimation, getJudgement, isMissed} from './judgement'
 import {Color, White, Black, Gold, Cloudy, Violet} from './color'
 import {lerp} from './util'
 // import {Clock} from './clock'
@@ -70,6 +70,17 @@ class Column {
       }
     }
     return Judgement.None
+  }
+
+  checkMiss (songTime: number): boolean {
+    let missed = false
+    for (const note of this.notes) {
+      if (note.state === NoteState.Active && isMissed(note.getTiming(songTime))) {
+        note.state = NoteState.Inactive
+        missed = true
+      }
+    }
+    return missed
   }
 
   updateBrightness (elapsed: number) {
@@ -144,9 +155,13 @@ export class Notefield {
     this.columns.forEach(col => {
       col.updateInputState()
       col.updateBrightness(elapsed)
+
       const score = col.checkTap(this.songTime)
       if (score !== Judgement.None) {
         this.judgement.play(score)
+      }
+      if (col.checkMiss(this.songTime)) {
+        this.judgement.play(Judgement.Break)
       }
     })
   }
