@@ -25,15 +25,15 @@ export class Background {
   shapes: Shape[] = []
   clock = new Clock(0.15)
 
-  update (elapsed: number) {
-    if (elapsed > 1) return
+  update (dt: number) {
+    if (dt > 1) return
 
-    if (this.clock.update(elapsed)) {
+    if (this.clock.update(dt)) {
       this.shapes.push(new Shape())
       this.shapes.sort((a, b) => a.size - b.size)
     }
 
-    this.shapes.forEach(shape => shape.y -= shape.size * 40 * elapsed)
+    this.shapes.forEach(shape => shape.y -= shape.size * 40 * dt)
     this.shapes = this.shapes.filter(shape => shape.y > -100)
   }
 

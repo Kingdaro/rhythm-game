@@ -84,11 +84,11 @@ class Column {
     return missed
   }
 
-  updateBrightness (elapsed: number) {
+  updateBrightness (dt: number) {
     if (this.held) {
       this.brightness = 1
     } else {
-      this.brightness = lerp(this.brightness, 0, elapsed * 18)
+      this.brightness = lerp(this.brightness, 0, dt * 18)
     }
   }
 
@@ -148,12 +148,12 @@ export class Notefield {
     this.columns = colors.map((color, i) => new Column(color, keys[i]))
   }
 
-  update (elapsed: number) {
-    this.judgement.update(elapsed)
+  update (dt: number) {
+    this.judgement.update(dt)
 
     this.columns.forEach(col => {
       col.updateInputState()
-      col.updateBrightness(elapsed)
+      col.updateBrightness(dt)
 
       const score = col.checkTap(this.song.time)
       if (score !== Judgement.None) {

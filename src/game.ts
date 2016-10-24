@@ -10,9 +10,9 @@ export class Game {
   gameplay = new Gameplay()
 
   update () {
-    const elapsed = this.timer.step()
-    this.bg.update(elapsed)
-    this.gameplay.update(elapsed)
+    const dt = this.timer.step()
+    this.bg.update(dt)
+    this.gameplay.update(dt)
   }
 
   draw () {

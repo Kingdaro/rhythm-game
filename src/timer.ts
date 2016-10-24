@@ -7,8 +7,8 @@ export class Timer {
   time = now()
 
   step (): number {
-    const elapsed = now() - this.time
+    const dt = now() - this.time
     this.time = now()
-    return elapsed
+    return dt
   }
 }

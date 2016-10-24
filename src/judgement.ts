@@ -33,8 +33,8 @@ export class JudgementAnimation {
     this.judgement = score
   }
 
-  update (elapsed: number) {
-    this.time = clamp(this.time - (elapsed / 0.8), 0, 1)
+  update (dt: number) {
+    this.time = clamp(this.time - (dt / 0.8), 0, 1)
   }
 
   draw (x: number, y: number) {

@@ -12,9 +12,9 @@ export class Gameplay {
     this.field = new Notefield(this.song)
   }
 
-  update (elapsed: number) {
-    this.song.update(elapsed)
-    this.field.update(elapsed)
+  update (dt: number) {
+    this.song.update(dt)
+    this.field.update(dt)
   }
 
   draw () {

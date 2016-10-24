@@ -19,10 +19,10 @@ class Particle {
     this.ty = this.y * lerp(1, 5, random())
   }
 
-  update (elapsed: number) {
-    this.x = lerp(this.x, this.tx, elapsed * 6)
-    this.y = lerp(this.y, this.ty, elapsed * 6)
-    this.life -= elapsed * 4
+  update (dt: number) {
+    this.x = lerp(this.x, this.tx, dt * 6)
+    this.y = lerp(this.y, this.ty, dt * 6)
+    this.life -= dt * 4
   }
 
   draw () {
@@ -53,8 +53,8 @@ export class NoteExplosion {
     }
   }
 
-  update (elapsed: number) {
-    this.particles.forEach(part => part.update(elapsed))
+  update (dt: number) {
+    this.particles.forEach(part => part.update(dt))
     this.particles = this.particles.filter(p => p.isAlive())
   }
 

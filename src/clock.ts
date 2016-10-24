@@ -3,8 +3,8 @@ export class Clock {
 
   constructor (private limit: number) {}
 
-  update (elapsed: number): boolean {
-    this.time += elapsed
+  update (dt: number): boolean {
+    this.time += dt
     if (this.time >= this.limit) {
       this.time -= this.limit
       return true
