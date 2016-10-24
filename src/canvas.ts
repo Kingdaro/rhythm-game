@@ -27,8 +27,10 @@ export function circle (x: number, y: number, radius: number, sides: number = 0)
 }
 
 export function fillRect (x: number, y: number, width: number, height: number, color?: Color) {
-  if (color) setFillColor(color)
-  ctx.fillRect(x, y, width, height)
+  layer(() => {
+    if (color) setFillColor(color)
+    ctx.fillRect(x, y, width, height)
+  })
 }
 
 export function strokeRect (x: number, y: number, width: number, height: number) {
@@ -40,8 +42,10 @@ export function fillText (text: string, x: number, y: number) {
 }
 
 export function clear (color: Color) {
-  ctx.fillStyle = color.toString()
-  ctx.fillRect(0, 0, width, height)
+  layer(() => {
+    setFillColor(color)
+    ctx.fillRect(0, 0, width, height)
+  })
 }
 
 // graphics state
