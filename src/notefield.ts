@@ -23,14 +23,14 @@ class Note {
 
   constructor (public time: number, public length: number, public color: Color) {}
 
-  draw (songTime: number) {
+  draw () {
     if (this.state === NoteState.Hit) return
 
     const receptorPosition = canvas.height - KeyHeight
     const scrollDirection = -1
 
-    const headPosition = (this.time - songTime) * NoteSpacing
-    const tailPosition = (this.time + this.length - songTime) * NoteSpacing
+    const headPosition = (this.time) * NoteSpacing
+    const tailPosition = (this.time + this.length) * NoteSpacing
 
     const position = receptorPosition + headPosition * scrollDirection
     const holdLength = (tailPosition - headPosition) * scrollDirection
@@ -152,7 +152,10 @@ class Column {
     })
 
     // notes
-    this.notes.forEach(note => note.draw(songTime))
+    canvas.layer(() => {
+      canvas.translate(0, songTime * NoteSpacing)
+      this.notes.forEach(note => note.draw())
+    })
 
     // key
     canvas.layer(() => {
