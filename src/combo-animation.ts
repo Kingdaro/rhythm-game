@@ -6,7 +6,6 @@ import {TweenValue} from './tween'
 
 export class ComboAnimation {
   sprite = new TextSprite()
-  scale = new TweenValue(0.7, 1, 0.3)
   combo = 0
 
   constructor (public x = 0, public y = 0) {
@@ -17,7 +16,7 @@ export class ComboAnimation {
   add (combo: number) {
     if (combo > 0) {
       this.combo += combo
-      this.scale.reset()
+      this.sprite.tween('scale', new TweenValue(0.7, 1, 0.18))
     }
   }
 
@@ -26,15 +25,14 @@ export class ComboAnimation {
   }
 
   update (dt: number) {
-    this.scale.update(dt)
-    this.sprite.scale = this.scale.value
-  }
-
-  draw () {
-    // if (this.combo < 1) return
+    this.sprite.update(dt)
     this.sprite.x = this.x
     this.sprite.y = this.y
     this.sprite.text = this.combo.toString()
+  }
+
+  draw () {
+    if (this.combo < 1) return
     this.sprite.draw()
   }
 }
