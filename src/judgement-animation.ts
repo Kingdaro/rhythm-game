@@ -1,6 +1,6 @@
 import {Judgement} from './scoring'
 import {Color, White, Blue, Orange, Red, Green} from './color'
-import {TweenValue} from './tween'
+import {TweenValue, TweenGroup} from './tween'
 import * as canvas from './canvas'
 import * as util from './util'
 
@@ -43,8 +43,7 @@ class TextSprite {
 
 export class JudgementAnimation {
   sprite = new TextSprite()
-  offset = new TweenValue()
-  opacity = new TweenValue()
+  tweens = new TweenGroup()
 
   constructor () {
     this.sprite.fontSize = 60
@@ -55,23 +54,22 @@ export class JudgementAnimation {
     this.sprite.color = JudgementColor[judgement]
 
     if (judgement !== Judgement.Break) {
-      this.offset = new TweenValue(20, 0, 0.3)
-      this.opacity = new TweenValue(1, 0, 0.3, 0.7)
+      this.tweens.add('offset', 20, 0, 0.3)
+      this.tweens.add('opacity', 1, 0, 0.3, 0.7)
     } else {
-      this.offset = new TweenValue(0, 20, 1)
-      this.opacity = new TweenValue(1, 0, 0.5, 0.5)
+      this.tweens.add('offset', 0, 20, 1)
+      this.tweens.add('opacity', 1, 0, 0.5, 0.5)
     }
   }
 
   update (dt: number) {
-    this.offset.update(dt)
-    this.opacity.update(dt)
+    this.tweens.update(dt)
   }
 
   draw (x: number, y: number) {
     this.sprite.x = x
-    this.sprite.y = y + this.offset.value
-    this.sprite.opacity = this.opacity.value
+    this.sprite.y = y + this.tweens.get('offset')
+    this.sprite.opacity = this.tweens.get('opacity')
     this.sprite.draw()
   }
 }

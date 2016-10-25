@@ -2,12 +2,6 @@ import * as util from './util'
 
 type EasingFunction = (delta: number) => number
 
-interface TweenPoint {
-  time: number
-  value: number
-  easing: EasingFunction
-}
-
 export const Linear = delta => delta
 
 export const QuadIn = delta => delta ** 2
@@ -46,5 +40,44 @@ export class TweenValue {
 
   update (dt: number) {
     this.setTime(this.time + dt)
+  }
+
+  reset () {
+    this.setTime(0)
+  }
+}
+
+export class TweenGroup {
+  tweens = {}
+
+  add (
+    name: string,
+    start = 0,
+    end = 0,
+    duration = 0,
+    delay = 0,
+    easing: EasingFunction = QuadOut,
+  ) {
+    this.tweens[name] = new TweenValue(start, end, duration, delay, easing)
+  }
+
+  get (name: string): number {
+    if (name in this.tweens) {
+      return this.tweens[name].value
+    } else {
+      return 0
+    }
+  }
+
+  update (dt: number) {
+    for (const name in this.tweens) {
+      this.tweens[name].update(dt)
+    }
+  }
+
+  reset () {
+    for (const name in this.tweens) {
+      this.tweens[name].reset()
+    }
   }
 }
