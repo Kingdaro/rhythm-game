@@ -12,7 +12,11 @@ export function lerp (a: number, b: number, delta: number): number {
 
 // get the delta of a number between a and b
 export function delta (value: number, a: number, b: number): number {
-  return (value - a) / (b - a)
+  if (b - a !== 0) {
+    return clamp((value - a) / (b - a), 0, 1)
+  } else {
+    return 0
+  }
 }
 
 // return a random item from a list
