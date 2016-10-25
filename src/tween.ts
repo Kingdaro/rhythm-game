@@ -38,8 +38,9 @@ export class TweenValue {
     }
   }
 
-  update (dt: number) {
+  update (dt: number): boolean {
     this.setTime(this.time + dt)
+    return this.time > this.delay + this.duration
   }
 
   reset () {
