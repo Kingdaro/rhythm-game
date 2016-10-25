@@ -100,3 +100,7 @@ export function translate (x: number, y: number) {
 export function rotate (deg: number) {
   ctx.rotate(degrees(deg))
 }
+
+export function scale (sx: number, sy = sx) {
+  ctx.scale(sx, sy)
+}
