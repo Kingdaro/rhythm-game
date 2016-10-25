@@ -10,6 +10,11 @@ export function lerp (a: number, b: number, delta: number): number {
   return a + (b - a) * clamp(delta, 0, 1)
 }
 
+// get the delta of a number between a and b
+export function delta (value: number, a: number, b: number): number {
+  return (value - a) / (b - a)
+}
+
 // return a random item from a list
 export function randomItem<T> (list: T[]): T {
   return list[floor(random() * list.length)]
