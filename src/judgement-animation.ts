@@ -10,6 +10,7 @@ const JudgementColor = {
   [Judgement.Perfect]: Orange,
   [Judgement.Good]: Green,
   [Judgement.Break]: Red,
+  [Judgement.None]: new Color(0, 0, 0, 0),
 }
 
 const JudgementText = {
@@ -17,31 +18,42 @@ const JudgementText = {
   [Judgement.Perfect]: 'PERFECT',
   [Judgement.Good]: 'GOOD',
   [Judgement.Break]: 'BREAK',
+  [Judgement.None]: ''
 }
 
 export class JudgementAnimation {
   sprite = new TextSprite()
+  judgement = Judgement.None
+
+  bounce = new TweenValue()
+  fade = new TweenValue()
+
+  bounceBreak = new TweenValue(this.y, this.y + 20, 1, 0, Linear)
+  fadeBreak =  new TweenValue(1, 0, 0.5, 0.5)
 
   constructor (public x = 0, public y = 0) {
-    this.sprite.fontSize = 60
+    this.sprite.x = () => this.x
+    this.sprite.y = () => this.bounce.value
+    this.sprite.opacity = () => this.fade.value
+    this.sprite.fontSize = () => 60
+    this.sprite.text = () => JudgementText[this.judgement]
+    this.sprite.color = () => JudgementColor[this.judgement]
   }
 
   play (judgement: Judgement) {
-    this.sprite.text = JudgementText[judgement]
-    this.sprite.color = JudgementColor[judgement]
-
+    this.judgement = judgement
     if (judgement !== Judgement.Break) {
-      this.sprite.tween('y', new TweenValue(this.y + 20, this.y, 0.3))
-      this.sprite.tween('opacity', new TweenValue(1, 0, 0.3, 0.7))
+      this.bounce = new TweenValue(this.y + 20, this.y, 0.3)
+      this.fade = new TweenValue(1, 0, 0.3, 0.7)
     } else {
-      this.sprite.tween('y', new TweenValue(this.y, this.y + 20, 1, 0, Linear))
-      this.sprite.tween('opacity', new TweenValue(1, 0, 0.5, 0.5))
+      this.bounce = new TweenValue(this.y, this.y + 20, 1, 0, Linear)
+      this.fade = new TweenValue(1, 0, 0.5, 0.5)
     }
   }
 
   update (dt: number) {
-    this.sprite.update(dt)
-    this.sprite.x = this.x
+    this.bounce.update(dt)
+    this.fade.update(dt)
   }
 
   draw () {

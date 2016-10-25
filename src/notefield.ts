@@ -170,8 +170,8 @@ class Column {
 export class Notefield {
   columns: Column[] = []
   explosion = new NoteExplosion()
-  judgement = new JudgementAnimation()
-  combo = new ComboAnimation()
+  judgement: JudgementAnimation
+  combo: ComboAnimation
 
   constructor (public song: Song) {
     this.setColumns(
@@ -193,11 +193,8 @@ export class Notefield {
 
     const fieldWidth = this.columns.length * ColumnWidth
 
-    this.judgement.x = fieldWidth / 2
-    this.judgement.y = canvas.height / 2 + 80
-
-    this.combo.x = fieldWidth / 2
-    this.combo.y = canvas.height / 2 - 120
+    this.judgement = new JudgementAnimation(fieldWidth / 2, canvas.height / 2 + 80)
+    this.combo = new ComboAnimation(fieldWidth / 2, canvas.height / 2 - 120)
   }
 
   setColumns (colors: Color[], keys: string[]) {
