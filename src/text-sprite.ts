@@ -6,6 +6,7 @@ export class TextSprite {
   fontSize = 32
   align = 'center'
   opacity = 1
+  scale = 1
 
   constructor (
     public text = '',
@@ -16,10 +17,12 @@ export class TextSprite {
 
   draw () {
     canvas.layer(() => {
+      canvas.translate(this.x, this.y)
+      canvas.scale(this.scale)
       canvas.setFillColor(this.color.opacity(this.opacity))
       canvas.setFont(`${this.fontSize}px ${this.font}`)
       canvas.setTextAlign(this.align)
-      canvas.fillText(this.text, this.x, this.y)
+      canvas.fillText(this.text, 0, 0)
     })
   }
 }

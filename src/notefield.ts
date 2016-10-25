@@ -190,6 +190,14 @@ export class Notefield {
     this.columns[3].addNote(9, 0)
     this.columns[4].addNote(10, 0)
     this.columns[5].addNote(11, 0)
+
+    const fieldWidth = this.columns.length * ColumnWidth
+
+    this.judgement.x = fieldWidth / 2
+    this.judgement.y = canvas.height / 2 + 80
+
+    this.combo.x = fieldWidth / 2
+    this.combo.y = canvas.height / 2 - 120
   }
 
   setColumns (colors: Color[], keys: string[]) {
@@ -197,9 +205,6 @@ export class Notefield {
   }
 
   update (dt: number) {
-    this.judgement.update(dt)
-    this.combo.update(dt)
-
     this.columns.forEach(col => {
       col.updateInputState()
       col.updateBrightness(dt)
@@ -214,6 +219,9 @@ export class Notefield {
         }
       }
     })
+
+    this.judgement.update(dt)
+    this.combo.update(dt)
   }
 
   draw () {
@@ -246,10 +254,10 @@ export class Notefield {
       })
 
       // combo
-      this.combo.draw(fieldWidth / 2, canvas.height / 2 - 120)
+      this.combo.draw()
 
       // judgement
-      this.judgement.draw(fieldWidth / 2, canvas.height / 2 + 80)
+      this.judgement.draw()
     })
 
     // note explosions

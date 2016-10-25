@@ -1,15 +1,23 @@
 import * as canvas from './canvas'
 import * as util from './util'
 import {Cloudy} from './color'
+import {TextSprite} from './text-sprite'
+import {TweenValue} from './tween'
 
 export class ComboAnimation {
+  sprite = new TextSprite()
+  scale = new TweenValue(0.7, 1, 0.3)
   combo = 0
-  time = 1
+
+  constructor (public x = 0, public y = 0) {
+    this.sprite.color = Cloudy
+    this.sprite.fontSize = 72
+  }
 
   add (combo: number) {
     if (combo > 0) {
       this.combo += combo
-      this.time = 0
+      this.scale.reset()
     }
   }
 
@@ -18,21 +26,15 @@ export class ComboAnimation {
   }
 
   update (dt: number) {
-    this.time = util.lerp(this.time, 1, dt * 15)
+    this.scale.update(dt)
+    this.sprite.scale = this.scale.value
   }
 
-  draw (x: number, y: number) {
-    if (this.combo < 1) return
-
-    canvas.setFont('72px Unica One')
-    canvas.setTextAlign('center')
-
-    canvas.layer(() => {
-      const scale = util.lerp(0.8, 1, this.time)
-      canvas.translate(x, y)
-      canvas.ctx.scale(scale, scale)
-      canvas.setFillColor(Cloudy)
-      canvas.fillText(this.combo.toString(), 0, 0)
-    })
+  draw () {
+    // if (this.combo < 1) return
+    this.sprite.x = this.x
+    this.sprite.y = this.y
+    this.sprite.text = this.combo.toString()
+    this.sprite.draw()
   }
 }

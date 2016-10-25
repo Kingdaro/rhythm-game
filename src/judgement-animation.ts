@@ -23,7 +23,7 @@ export class JudgementAnimation {
   sprite = new TextSprite()
   tweens = new TweenGroup()
 
-  constructor () {
+  constructor (public x = 0, public y = 0) {
     this.sprite.fontSize = 60
   }
 
@@ -44,9 +44,9 @@ export class JudgementAnimation {
     this.tweens.update(dt)
   }
 
-  draw (x: number, y: number) {
-    this.sprite.x = x
-    this.sprite.y = y + this.tweens.get('offset')
+  draw () {
+    this.sprite.x = this.x
+    this.sprite.y = this.y + this.tweens.get('offset')
     this.sprite.opacity = this.tweens.get('opacity')
     this.sprite.draw()
   }
