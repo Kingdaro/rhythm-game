@@ -1,6 +1,7 @@
 import {Judgement} from './scoring'
 import {Color, White, Blue, Orange, Red, Green} from './color'
-import {TweenValue, TweenGroup} from './tween'
+import {TextSprite} from './text-sprite'
+import {TweenGroup, Linear} from './tween'
 import * as canvas from './canvas'
 import * as util from './util'
 
@@ -16,29 +17,6 @@ const JudgementText = {
   [Judgement.Perfect]: 'PERFECT',
   [Judgement.Good]: 'GOOD',
   [Judgement.Break]: 'BREAK',
-}
-
-class TextSprite {
-  font = 'Unica One'
-  fontSize = 32
-  align = 'center'
-  opacity = 1
-
-  constructor (
-    public text = '',
-    public x = 0,
-    public y = 0,
-    public color = White,
-  ) {}
-
-  draw () {
-    canvas.layer(() => {
-      canvas.setFillColor(this.color.opacity(this.opacity))
-      canvas.setFont(`${this.fontSize}px ${this.font}`)
-      canvas.setTextAlign(this.align)
-      canvas.fillText(this.text, this.x, this.y)
-    })
-  }
 }
 
 export class JudgementAnimation {
@@ -57,7 +35,7 @@ export class JudgementAnimation {
       this.tweens.add('offset', 20, 0, 0.3)
       this.tweens.add('opacity', 1, 0, 0.3, 0.7)
     } else {
-      this.tweens.add('offset', 0, 20, 1)
+      this.tweens.add('offset', 0, 20, 1, 0, Linear)
       this.tweens.add('opacity', 1, 0, 0.5, 0.5)
     }
   }
