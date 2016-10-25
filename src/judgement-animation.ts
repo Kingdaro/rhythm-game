@@ -1,5 +1,6 @@
 import {Judgement} from './scoring'
-import {Blue, Orange, Red, Green} from './color'
+import {Color, White, Blue, Orange, Red, Green} from './color'
+import {TweenValue} from './tween'
 import * as canvas from './canvas'
 import * as util from './util'
 
@@ -17,48 +18,60 @@ const JudgementText = {
   [Judgement.Break]: 'BREAK',
 }
 
-export class JudgementAnimation {
-  time = 0
-  judgement = Judgement.None
+class TextSprite {
+  font = 'Unica One'
+  fontSize = 32
+  align = 'center'
+  opacity = 1
 
-  play (score: Judgement) {
-    this.time = 1
-    this.judgement = score
+  constructor (
+    public text = '',
+    public x = 0,
+    public y = 0,
+    public color = White,
+  ) {}
+
+  draw () {
+    canvas.layer(() => {
+      canvas.setFillColor(this.color.opacity(this.opacity))
+      canvas.setFont(`${this.fontSize}px ${this.font}`)
+      canvas.setTextAlign(this.align)
+      canvas.fillText(this.text, this.x, this.y)
+    })
+  }
+}
+
+export class JudgementAnimation {
+  sprite = new TextSprite()
+  offset = new TweenValue()
+  opacity = new TweenValue()
+
+  constructor () {
+    this.sprite.fontSize = 60
+  }
+
+  play (judgement: Judgement) {
+    this.sprite.text = JudgementText[judgement]
+    this.sprite.color = JudgementColor[judgement]
+
+    if (judgement !== Judgement.Break) {
+      this.offset = new TweenValue(20, 0, 0.3)
+      this.opacity = new TweenValue(1, 0, 0.3, 0.7)
+    } else {
+      this.offset = new TweenValue(0, 20, 1)
+      this.opacity = new TweenValue(1, 0, 0.5, 0.5)
+    }
   }
 
   update (dt: number) {
-    this.time = util.clamp(this.time - (dt / 0.8), 0, 1)
+    this.offset.update(dt)
+    this.opacity.update(dt)
   }
 
   draw (x: number, y: number) {
-    if (this.judgement === Judgement.None) return
-
-    const text = JudgementText[this.judgement]
-    const color = JudgementColor[this.judgement]
-    const position = this.getPosition()
-    const opacity = this.getOpacity()
-
-    canvas.layer(() => {
-      canvas.setFillColor(color.opacity(opacity))
-      canvas.setFont('60px Unica One')
-      canvas.setTextAlign('center')
-      canvas.fillText(text, x, y + position)
-    })
-  }
-
-  getPosition (): number {
-    if (this.judgement !== Judgement.Break) {
-      return (this.time ** 8) * 20
-    } else {
-      return (1 - this.time) * 20
-    }
-  }
-
-  getOpacity (): number {
-    if (this.judgement !== Judgement.Break) {
-      return util.clamp(this.time * 5, 0, 1)
-    } else {
-      return util.clamp(this.time * 2, 0, 1)
-    }
+    this.sprite.x = x
+    this.sprite.y = y + this.offset.value
+    this.sprite.opacity = this.opacity.value
+    this.sprite.draw()
   }
 }

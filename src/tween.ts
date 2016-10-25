@@ -22,44 +22,29 @@ export const QuintOut = delta => delta ** (1 / 5)
 
 export class TweenValue {
   time = 0
-  points: TweenPoint[] = []
+  value: number
 
-  at (time: number, value: number, easing: EasingFunction = QuadOut) {
-    this.points.push({ time, value, easing })
-    this.points.sort((a, b) => a.time - b.time)
+  constructor (
+    public start = 0,
+    public end = 0,
+    public duration = 0,
+    public delay = 0,
+    public easing: EasingFunction = QuadOut,
+  ) {
+    this.value = start
   }
 
-  getRange (time: number): [TweenPoint, TweenPoint] {
-    const index = this.points.findIndex(point => time >= point.time)
-    if (index > -1) {
-      const current = this.points[index]
-      const next = this.points[index + 1] || current
-      return [current, next]
+  setTime (time: number) {
+    this.time = time
+    if (time > this.delay) {
+      const delta = (this.time - this.delay) / this.duration
+      this.value = util.lerp(this.start, this.end, this.easing(delta))
     } else {
-      const first = this.points[0]
-      return [first, first]
+      this.value = this.start
     }
   }
 
-  valueAtTime (time: number): number {
-    const [current, next] = this.getRange(time)
-    const delta = util.delta(time, current.time, next.time)
-    return util.lerp(current.value, next.value, current.easing(delta))
-  }
-
   update (dt: number) {
-    this.time += dt
-  }
-
-  set (time: number) {
-    this.time = time
-  }
-
-  reset () {
-    this.time = 0
-  }
-
-  value (): number {
-    return this.valueAtTime(this.time)
+    this.setTime(this.time + dt)
   }
 }
